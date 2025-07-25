@@ -2,18 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Custom fonts import */
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+/* Remove Google Fonts import - handled by Next.js font optimization */
+/* @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap'); */
 
 @layer base {
   html {
     scroll-behavior: smooth;
-    font-family: "Inter", system-ui, sans-serif;
+    /* Font family will be applied via CSS variables from layout.tsx */
   }
 
   body {
     @apply bg-gradient-to-br from-slate-50 via-white to-blue-50 text-dark-800 antialiased;
     min-height: 100vh;
+    /* Use CSS variable for font family */
+    font-family: var(--font-inter, system-ui, sans-serif);
   }
 
   /* Custom scrollbar */
@@ -31,6 +33,16 @@
 
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-primary-500;
+  }
+
+  #home {
+    min-height: calc(100vh - 80px);
+    margin-top: 80px;
+  }
+
+  /* Ensure sections have proper IDs for navigation */
+  section[id] {
+    scroll-margin-top: 80px; /* Account for fixed header height */
   }
 }
 

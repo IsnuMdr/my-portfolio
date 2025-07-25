@@ -1,158 +1,425 @@
 "use client";
-import { motion } from "framer-motion";
-import { useState } from "react";
-import { ExternalLink, Github } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useMemo, useCallback } from "react";
+import { ExternalLink, Github, Eye, Calendar } from "lucide-react";
+import { TechIcons } from "../ui/TechIcons";
 import { AnimatedSection } from "../animations/AnimatedSection";
 
 interface Project {
   id: string;
   title: string;
   description: string;
+  longDescription: string;
   imageUrl: string;
   demoUrl?: string;
   githubUrl?: string;
   technologies: string[];
   featured: boolean;
+  category: string;
+  completedAt: string;
 }
 
-export const Projects = () => {
-  const [filter, setFilter] = useState("all");
+const projectsData: Project[] = [
+  {
+    id: "1",
+    title: "E-Commerce Platform",
+    description:
+      "A modern, full-stack e-commerce solution with seamless user experience",
+    longDescription:
+      "Complete e-commerce platform built with Next.js, featuring user authentication, payment processing, inventory management, and admin dashboard. Includes real-time notifications and responsive design.",
+    imageUrl: "/api/placeholder/600/400",
+    demoUrl: "https://demo.com",
+    githubUrl: "https://github.com",
+    technologies: [
+      "Next.js",
+      "TypeScript",
+      "Tailwind CSS",
+      "Prisma",
+      "PostgreSQL",
+      "Stripe",
+    ],
+    featured: true,
+    category: "fullstack",
+    completedAt: "2024-03",
+  },
+  {
+    id: "2",
+    title: "AI Chat Interface",
+    description:
+      "Intelligent chatbot with natural language processing capabilities",
+    longDescription:
+      "Modern chat interface powered by AI, featuring real-time messaging, conversation history, and smart response suggestions. Built with React and integrated with OpenAI API.",
+    imageUrl: "/api/placeholder/600/400",
+    demoUrl: "https://demo.com",
+    githubUrl: "https://github.com",
+    technologies: ["React", "Node.js", "OpenAI API", "Socket.io", "MongoDB"],
+    featured: true,
+    category: "frontend",
+    completedAt: "2024-02",
+  },
+  {
+    id: "3",
+    title: "Task Management System",
+    description: "Collaborative project management tool with real-time updates",
+    longDescription:
+      "Comprehensive task management system with team collaboration features, real-time updates, file sharing, and progress tracking. Includes mobile-responsive design.",
+    imageUrl: "/api/placeholder/600/400",
+    demoUrl: "https://demo.com",
+    githubUrl: "https://github.com",
+    technologies: ["Vue.js", "Express.js", "MongoDB", "Socket.io"],
+    featured: false,
+    category: "fullstack",
+    completedAt: "2024-01",
+  },
+  {
+    id: "4",
+    title: "Weather Analytics Dashboard",
+    description:
+      "Data visualization dashboard for weather patterns and forecasts",
+    longDescription:
+      "Interactive dashboard displaying weather analytics with beautiful charts, forecasting capabilities, and location-based data. Features responsive design and real-time updates.",
+    imageUrl: "/api/placeholder/600/400",
+    demoUrl: "https://demo.com",
+    githubUrl: "https://github.com",
+    technologies: ["React", "D3.js", "Weather API", "Chart.js"],
+    featured: false,
+    category: "frontend",
+    completedAt: "2023-12",
+  },
+  {
+    id: "5",
+    title: "REST API Server",
+    description: "Scalable REST API with authentication and rate limiting",
+    longDescription:
+      "High-performance REST API server built with Node.js and Express. Features JWT authentication, rate limiting, data validation, and comprehensive documentation.",
+    imageUrl: "/api/placeholder/600/400",
+    demoUrl: "https://demo.com",
+    githubUrl: "https://github.com",
+    technologies: ["Node.js", "Express.js", "PostgreSQL", "JWT", "Swagger"],
+    featured: false,
+    category: "backend",
+    completedAt: "2023-11",
+  },
+  {
+    id: "6",
+    title: "Mobile Banking App",
+    description:
+      "Secure mobile banking application with biometric authentication",
+    longDescription:
+      "React Native mobile app for banking operations with fingerprint authentication, real-time transactions, and push notifications.",
+    imageUrl: "/api/placeholder/600/400",
+    demoUrl: "https://demo.com",
+    githubUrl: "https://github.com",
+    technologies: ["React Native", "Firebase", "Redux", "Expo"],
+    featured: true,
+    category: "mobile",
+    completedAt: "2023-10",
+  },
+];
 
-  // This would normally come from your API
-  const projects: Project[] = [
-    {
-      id: "1",
-      title: "E-Commerce Platform",
-      description:
-        "Full-stack e-commerce solution with modern design and secure payments",
-      imageUrl: "/api/placeholder/600/400",
-      demoUrl: "https://demo.com",
-      githubUrl: "https://github.com",
-      technologies: ["Next.js", "TypeScript", "Tailwind CSS", "Stripe"],
-      featured: true,
-    },
-    {
-      id: "2",
-      title: "Task Management App",
-      description: "Collaborative task management with real-time updates",
-      imageUrl: "/api/placeholder/600/400",
-      demoUrl: "https://demo.com",
-      githubUrl: "https://github.com",
-      technologies: ["React", "Node.js", "Socket.io", "MongoDB"],
-      featured: true,
-    },
-    {
-      id: "3",
-      title: "Weather Dashboard",
-      description: "Beautiful weather app with location-based forecasts",
-      imageUrl: "/api/placeholder/600/400",
-      demoUrl: "https://demo.com",
-      githubUrl: "https://github.com",
-      technologies: ["Vue.js", "Weather API", "Chart.js"],
-      featured: false,
-    },
-  ];
+export const Projects = () => {
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [hoveredProject, setHoveredProject] = useState<string | null>(null);
+
+  // Categories with counts
+  const categories = useMemo(() => {
+    const allCategories = [
+      { id: "all", label: "All Projects", count: projectsData.length },
+      {
+        id: "featured",
+        label: "Featured",
+        count: projectsData.filter((p) => p.featured).length,
+      },
+    ];
+
+    // Get unique categories from projects
+    const uniqueCategories = [...new Set(projectsData.map((p) => p.category))];
+    const categoryOptions = uniqueCategories.map((cat) => ({
+      id: cat,
+      label: cat.charAt(0).toUpperCase() + cat.slice(1),
+      count: projectsData.filter((p) => p.category === cat).length,
+    }));
+
+    return [...allCategories, ...categoryOptions];
+  }, []);
+
+  // Filtered projects with proper memoization
+  const filteredProjects = useMemo(() => {
+    let filtered: Project[] = [];
+
+    if (selectedCategory === "all") {
+      filtered = projectsData;
+    } else if (selectedCategory === "featured") {
+      filtered = projectsData.filter((project) => project.featured);
+    } else {
+      filtered = projectsData.filter(
+        (project) => project.category === selectedCategory
+      );
+    }
+
+    return filtered;
+  }, [selectedCategory]);
+
+  // Handle category change
+  const handleCategoryChange = useCallback((categoryId: string) => {
+    setSelectedCategory(categoryId);
+    setHoveredProject(null); // Reset hover state
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2,
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 50 },
+    hidden: { opacity: 0, y: 50, scale: 0.9 },
     visible: {
       opacity: 1,
       y: 0,
+      scale: 1,
       transition: {
-        duration: 0.6,
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    },
+    exit: {
+      opacity: 0,
+      y: -50,
+      scale: 0.9,
+      transition: {
+        duration: 0.3,
       },
     },
   };
 
   return (
-    <section id="projects" className="py-20 bg-gray-50">
-      <div className="container-max section-padding">
+    <section id="projects" className="section-padding bg-gradient-section">
+      <div className="container-elegant">
         <AnimatedSection>
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 gradient-text">
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              className="inline-block text-primary-600 font-medium mb-4 tracking-wider uppercase text-sm"
+            >
+              Portfolio
+            </motion.span>
+            <h2 className="responsive-text-display font-bold mb-6 text-gradient">
               Featured Projects
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Here are some of my recent projects that showcase my skills and
-              experience
+            <p className="responsive-text-body text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              A collection of projects that showcase my skills in modern web
+              development, from concept to deployment with attention to detail
+              and user experience.
             </p>
           </div>
         </AnimatedSection>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
-          {projects.map((project) => (
+        {/* Category Filter */}
+        <AnimatedSection delay={0.2}>
+          <div className="flex flex-wrap justify-center gap-4 mb-12">
+            {categories.map((category) => (
+              <motion.button
+                key={category.id}
+                onClick={() => handleCategoryChange(category.id)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={`px-6 py-3 rounded-full font-medium transition-all duration-300 ${
+                  selectedCategory === category.id
+                    ? "bg-primary-600 text-white shadow-glow"
+                    : "bg-white/80 text-gray-700 hover:bg-white hover:text-primary-600 shadow-soft"
+                }`}
+              >
+                {category.label}
+                <span className="ml-2 text-xs opacity-70">
+                  ({category.count})
+                </span>
+              </motion.button>
+            ))}
+          </div>
+        </AnimatedSection>
+
+        {/* Projects Grid */}
+        <div className="min-h-[400px]">
+          <AnimatePresence mode="wait">
             <motion.div
-              key={project.id}
-              variants={itemVariants}
-              whileHover={{ y: -10 }}
-              className="card overflow-hidden group"
+              key={selectedCategory}
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+              className="grid grid-cols-1 md:grid-cols-2 gap-8"
             >
-              <div className="relative overflow-hidden">
-                <img
-                  src={project.imageUrl}
-                  alt={project.title}
-                  className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <div className="flex space-x-4">
-                    {project.demoUrl && (
-                      <motion.a
-                        href={project.demoUrl}
+              {filteredProjects.length > 0 ? (
+                filteredProjects.map((project) => (
+                  <motion.div
+                    key={`${selectedCategory}-${project.id}`}
+                    variants={itemVariants}
+                    layout
+                    onMouseEnter={() => setHoveredProject(project.id)}
+                    onMouseLeave={() => setHoveredProject(null)}
+                    className="card-elegant group cursor-pointer overflow-hidden"
+                  >
+                    {/* Project Image */}
+                    <div className="relative overflow-hidden rounded-t-2xl aspect-project">
+                      <motion.img
+                        src={project.imageUrl}
+                        alt={project.title}
+                        className="w-full h-full object-cover"
                         whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        className="p-2 bg-white rounded-full text-gray-800"
+                        transition={{ duration: 0.6 }}
+                      />
+
+                      {/* Overlay */}
+                      <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{
+                          opacity: hoveredProject === project.id ? 1 : 0,
+                        }}
+                        className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex items-center justify-center"
                       >
-                        <ExternalLink size={20} />
-                      </motion.a>
-                    )}
-                    {project.githubUrl && (
-                      <motion.a
-                        href={project.githubUrl}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        className="p-2 bg-white rounded-full text-gray-800"
-                      >
-                        <Github size={20} />
-                      </motion.a>
-                    )}
+                        <div className="flex gap-4">
+                          {project.demoUrl && (
+                            <motion.a
+                              href={project.demoUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              whileHover={{ scale: 1.1, y: -2 }}
+                              whileTap={{ scale: 0.9 }}
+                              className="p-3 bg-white/90 backdrop-blur-sm rounded-full text-gray-800 shadow-soft hover:shadow-medium transition-all duration-300"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Eye size={20} />
+                            </motion.a>
+                          )}
+                          {project.githubUrl && (
+                            <motion.a
+                              href={project.githubUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              whileHover={{ scale: 1.1, y: -2 }}
+                              whileTap={{ scale: 0.9 }}
+                              className="p-3 bg-white/90 backdrop-blur-sm rounded-full text-gray-800 shadow-soft hover:shadow-medium transition-all duration-300"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <Github size={20} />
+                            </motion.a>
+                          )}
+                        </div>
+                      </motion.div>
+
+                      {/* Featured Badge */}
+                      {project.featured && (
+                        <div className="absolute top-4 left-4">
+                          <span className="px-3 py-1 bg-accent-500 text-white text-xs font-medium rounded-full shadow-soft">
+                            Featured
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Project Content */}
+                    <div className="p-6">
+                      <div className="flex items-center justify-between mb-3">
+                        <h3 className="text-xl font-bold text-gray-900 group-hover:text-primary-600 transition-colors duration-300">
+                          {project.title}
+                        </h3>
+                        <div className="flex items-center text-sm text-gray-500">
+                          <Calendar size={14} className="mr-1" />
+                          {project.completedAt}
+                        </div>
+                      </div>
+
+                      <p className="text-gray-600 mb-4 leading-relaxed">
+                        {project.description}
+                      </p>
+
+                      {/* Technologies */}
+                      <div className="flex flex-wrap gap-3 mb-4">
+                        {project.technologies.slice(0, 4).map((tech) => (
+                          <div
+                            key={tech}
+                            className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full text-sm"
+                          >
+                            <TechIcons name={tech} size={16} />
+                            <span className="text-gray-700 font-medium">
+                              {tech}
+                            </span>
+                          </div>
+                        ))}
+                        {project.technologies.length > 4 && (
+                          <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">
+                            +{project.technologies.length - 4} more
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Action Links */}
+                      <div className="flex gap-3 pt-4 border-t border-gray-100">
+                        {project.demoUrl && (
+                          <a
+                            href={project.demoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium transition-colors duration-300"
+                          >
+                            <ExternalLink size={16} />
+                            Live Demo
+                          </a>
+                        )}
+                        {project.githubUrl && (
+                          <a
+                            href={project.githubUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 font-medium transition-colors duration-300"
+                          >
+                            <Github size={16} />
+                            Source Code
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                ))
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="col-span-full text-center py-12"
+                >
+                  <div className="text-gray-500">
+                    <div className="text-4xl mb-4">🔍</div>
+                    <h3 className="text-xl font-semibold mb-2">
+                      No projects found
+                    </h3>
+                    <p>Try selecting a different category</p>
                   </div>
-                </div>
-              </div>
-
-              <div className="p-6">
-                <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-                <p className="text-gray-600 mb-4">{project.description}</p>
-
-                <div className="flex flex-wrap gap-2">
-                  {project.technologies.map((tech) => (
-                    <span
-                      key={tech}
-                      className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                </div>
-              </div>
+                </motion.div>
+              )}
             </motion.div>
-          ))}
-        </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* View More Button */}
+        <AnimatedSection delay={0.4}>
+          <div className="text-center mt-12">
+            <motion.a
+              href="/projects"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="btn-outline-elegant"
+            >
+              View All Projects ({projectsData.length})
+            </motion.a>
+          </div>
+        </AnimatedSection>
       </div>
     </section>
   );

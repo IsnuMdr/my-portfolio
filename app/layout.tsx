@@ -2,21 +2,52 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+// Proper font configuration
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+});
 
 export const metadata: Metadata = {
-  title: "Your Name - Software Engineer Portfolio",
+  title: {
+    default: "Your Name - Software Engineer Portfolio",
+    template: "%s | Your Name Portfolio",
+  },
   description:
-    "Software Engineer passionate about creating innovative solutions and beautiful user experiences",
-  keywords:
-    "software engineer, web developer, portfolio, react, next.js, typescript",
-  authors: [{ name: "Your Name" }],
+    "Passionate Software Engineer specializing in modern web development. Creating elegant solutions with React, Next.js, TypeScript, and cutting-edge technologies.",
+  keywords: [
+    "software engineer",
+    "web developer",
+    "react developer",
+    "next.js developer",
+    "typescript developer",
+    "full stack developer",
+    "frontend developer",
+    "portfolio",
+    "indonesia developer",
+  ],
+  authors: [{ name: "Your Name", url: "https://yourportfolio.com" }],
+  creator: "Your Name",
+  publisher: "Your Name",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL("https://yourportfolio.com"),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://yourportfolio.com",
     title: "Your Name - Software Engineer Portfolio",
     description:
-      "Software Engineer passionate about creating innovative solutions and beautiful user experiences",
-    url: "https://yourportfolio.com",
-    siteName: "Your Portfolio",
+      "Passionate Software Engineer specializing in modern web development",
+    siteName: "Your Name Portfolio",
     images: [
       {
         url: "/og-image.jpg",
@@ -25,28 +56,34 @@ export const metadata: Metadata = {
         alt: "Your Name - Software Engineer Portfolio",
       },
     ],
-    locale: "en_US",
-    type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "Your Name - Software Engineer Portfolio",
     description:
-      "Software Engineer passionate about creating innovative solutions and beautiful user experiences",
+      "Passionate Software Engineer specializing in modern web development",
     images: ["/og-image.jpg"],
     creator: "@yourusername",
   },
   robots: {
     index: true,
     follow: true,
+    nocache: true,
     googleBot: {
       index: true,
       follow: true,
+      noimageindex: false,
       "max-video-preview": -1,
       "max-image-preview": "large",
       "max-snippet": -1,
     },
   },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon-16x16.png",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({
@@ -55,8 +92,86 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" className={inter.variable}>
+      <head>
+        {/* Analytics */}
+        {process.env.NODE_ENV === "production" &&
+          process.env.NEXT_PUBLIC_GA_ID && (
+            <>
+              <script
+                async
+                src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+              />
+              <script
+                dangerouslySetInnerHTML={{
+                  __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${process.env.NEXT_PUBLIC_GA_ID}', {
+                    page_path: window.location.pathname,
+                  });
+                `,
+                }}
+              />
+            </>
+          )}
+
+        {/* Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Person",
+              name: "Your Name",
+              jobTitle: "Software Engineer",
+              description:
+                "Passionate Software Engineer specializing in modern web development",
+              url: "https://yourportfolio.com",
+              sameAs: [
+                "https://github.com/yourusername",
+                "https://linkedin.com/in/yourusername",
+                "https://twitter.com/yourusername",
+              ],
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: "South Tangerang",
+                addressRegion: "Banten",
+                addressCountry: "Indonesia",
+              },
+              knowsAbout: [
+                "JavaScript",
+                "TypeScript",
+                "React",
+                "Next.js",
+                "Node.js",
+                "PostgreSQL",
+                "Web Development",
+                "Software Engineering",
+              ],
+            }),
+          }}
+        />
+      </head>
+      <body className={`${inter.className} antialiased`}>
+        {children}
+
+        {/* Service Worker Registration */}
+        {process.env.NODE_ENV === "production" && (
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                if ('serviceWorker' in navigator) {
+                  window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('/sw.js');
+                  });
+                }
+              `,
+            }}
+          />
+        )}
+      </body>
     </html>
   );
 }
