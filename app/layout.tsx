@@ -12,8 +12,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Your Name - Software Engineer Portfolio",
-    template: "%s | Your Name Portfolio",
+    default: "Isnu Munandar - Software Engineer Portfolio",
+    template: "%s | Isnu Munandar Portfolio",
   },
   description:
     "Passionate Software Engineer specializing in modern web development. Creating elegant solutions with React, Next.js, TypeScript, and cutting-edge technologies.",
@@ -28,9 +28,9 @@ export const metadata: Metadata = {
     "portfolio",
     "indonesia developer",
   ],
-  authors: [{ name: "Your Name", url: "https://yourportfolio.com" }],
-  creator: "Your Name",
-  publisher: "Your Name",
+  authors: [{ name: "Isnu Munandar", url: "https://yourportfolio.com" }],
+  creator: "Isnu Munandar",
+  publisher: "Isnu Munandar",
   formatDetection: {
     email: false,
     address: false,
@@ -44,22 +44,22 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://yourportfolio.com",
-    title: "Your Name - Software Engineer Portfolio",
+    title: "Isnu Munandar - Software Engineer Portfolio",
     description:
       "Passionate Software Engineer specializing in modern web development",
-    siteName: "Your Name Portfolio",
+    siteName: "Isnu Munandar Portfolio",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Your Name - Software Engineer Portfolio",
+        alt: "Isnu Munandar - Software Engineer Portfolio",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Your Name - Software Engineer Portfolio",
+    title: "Isnu Munandar - Software Engineer Portfolio",
     description:
       "Passionate Software Engineer specializing in modern web development",
     images: ["/og-image.jpg"],
@@ -124,7 +124,7 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Person",
-              name: "Your Name",
+              name: "Isnu Munandar",
               jobTitle: "Software Engineer",
               description:
                 "Passionate Software Engineer specializing in modern web development",

@@ -13,121 +13,14 @@ import {
   ExternalLink,
   ChevronRight,
 } from "lucide-react";
-
-interface Experience {
-  id: string;
-  company: string;
-  position: string;
-  description: string;
-  achievements: string[];
-  startDate: string;
-  endDate?: string;
-  current: boolean;
-  location?: string;
-  companyUrl?: string;
-  companyLogo?: string;
-  technologies: string[];
-  type: "full-time" | "part-time" | "contract" | "internship";
-}
-
-const experienceData: Experience[] = [
-  {
-    id: "1",
-    company: "Tech Innovations Inc.",
-    position: "Senior Software Engineer",
-    description:
-      "Leading development of scalable web applications and mentoring junior developers. Responsible for architectural decisions and implementing best practices across the development team.",
-    achievements: [
-      "Led development of microservices architecture that improved system performance by 40%",
-      "Mentored 5 junior developers and conducted code reviews",
-      "Implemented CI/CD pipelines reducing deployment time by 60%",
-      "Architected real-time notification system serving 100k+ users",
-    ],
-    startDate: "2022-01",
-    current: true,
-    location: "Remote",
-    companyUrl: "https://techinnovations.com",
-    companyLogo: "/api/placeholder/60/60",
-    technologies: [
-      "React",
-      "Next.js",
-      "Node.js",
-      "PostgreSQL",
-      "AWS",
-      "Docker",
-    ],
-    type: "full-time",
-  },
-  {
-    id: "2",
-    company: "StartupXYZ",
-    position: "Full Stack Developer",
-    description:
-      "Built and maintained web applications using modern JavaScript frameworks. Collaborated closely with design and product teams to deliver user-centric solutions.",
-    achievements: [
-      "Developed e-commerce platform that generated $2M+ in revenue",
-      "Reduced page load times by 50% through optimization techniques",
-      "Integrated payment systems and third-party APIs",
-      "Built responsive designs supporting 10+ device types",
-    ],
-    startDate: "2021-01",
-    endDate: "2021-12",
-    current: false,
-    location: "San Francisco, CA",
-    companyUrl: "https://startupxyz.com",
-    companyLogo: "/api/placeholder/60/60",
-    technologies: ["React", "Express.js", "MongoDB", "Stripe", "Vercel"],
-    type: "full-time",
-  },
-  {
-    id: "3",
-    company: "Digital Solutions Ltd.",
-    position: "Frontend Developer",
-    description:
-      "Focused on creating intuitive user interfaces and improving user experience. Worked with cross-functional teams to translate designs into interactive web applications.",
-    achievements: [
-      "Improved user engagement by 35% through UX enhancements",
-      "Built component library used across 5+ projects",
-      "Optimized SEO resulting in 60% increase in organic traffic",
-      "Collaborated with designers to implement pixel-perfect designs",
-    ],
-    startDate: "2020-06",
-    endDate: "2020-12",
-    current: false,
-    location: "New York, NY",
-    companyUrl: "https://digitalsolutions.com",
-    companyLogo: "/api/placeholder/60/60",
-    technologies: ["Vue.js", "Sass", "Webpack", "Figma", "Git"],
-    type: "full-time",
-  },
-  {
-    id: "4",
-    company: "Freelance Projects",
-    position: "Web Developer",
-    description:
-      "Delivered custom web solutions for various clients including small businesses and startups. Managed full project lifecycle from requirements gathering to deployment.",
-    achievements: [
-      "Completed 15+ projects with 100% client satisfaction",
-      "Developed custom CMS for content management",
-      "Created responsive websites with modern design principles",
-      "Provided ongoing maintenance and support",
-    ],
-    startDate: "2019-08",
-    endDate: "2020-05",
-    current: false,
-    location: "Remote",
-    technologies: ["WordPress", "PHP", "JavaScript", "MySQL", "HTML/CSS"],
-    type: "contract",
-  },
-];
+import { useExperience } from "@/lib/hooks/useExperience";
 
 export const Experience = () => {
-  const [selectedExperience, setSelectedExperience] = useState<string | null>(
-    null
-  );
   const [hoveredExperience, setHoveredExperience] = useState<string | null>(
     null
   );
+
+  const { experiences } = useExperience();
 
   const getTypeColor = (type: string) => {
     const colors = {
@@ -199,7 +92,7 @@ export const Experience = () => {
 
           {/* Experience Items */}
           <div className="space-y-12">
-            {experienceData.map((experience, index) => (
+            {experiences.map((experience, index) => (
               <AnimatedSection key={experience.id} delay={index * 0.1}>
                 <motion.div
                   className="relative flex flex-col md:flex-row gap-8 group"
@@ -315,9 +208,13 @@ export const Experience = () => {
                         </div>
 
                         <div className="text-xs text-gray-500">
-                          {calculateDuration(
-                            experience.startDate,
-                            experience.endDate
+                          {experience.endDate && (
+                            <span>
+                              {calculateDuration(
+                                experience.startDate,
+                                experience.endDate
+                              )}
+                            </span>
                           )}
                         </div>
 
@@ -416,7 +313,7 @@ export const Experience = () => {
               {
                 icon: Briefcase,
                 label: "Companies",
-                value: new Set(experienceData.map((exp) => exp.company)).size,
+                value: new Set(experiences.map((exp) => exp.company)).size,
                 color: "text-blue-600 bg-blue-100",
               },
               {

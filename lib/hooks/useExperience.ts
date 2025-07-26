@@ -1,15 +1,5 @@
+import { Experience } from "@prisma/client";
 import { useState, useEffect } from "react";
-
-interface Experience {
-  id: string;
-  company: string;
-  position: string;
-  description: string;
-  startDate: string;
-  endDate?: string;
-  current: boolean;
-  location?: string;
-}
 
 export const useExperience = () => {
   const [experiences, setExperiences] = useState<Experience[]>([]);

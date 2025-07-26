@@ -1,12 +1,5 @@
+import { Skill } from "@/types/skills";
 import { useState, useEffect } from "react";
-
-interface Skill {
-  id: string;
-  name: string;
-  category: string;
-  level: number;
-  icon?: string;
-}
 
 export const useSkills = () => {
   const [skills, setSkills] = useState<Skill[]>([]);

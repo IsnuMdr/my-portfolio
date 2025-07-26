@@ -101,7 +101,9 @@ export const Hero = () => {
           >
             <h1 className="responsive-text-hero font-bold mb-6 text-shadow">
               Hi, I&apos;m{" "}
-              <span className="text-gradient block sm:inline">Your Name</span>
+              <span className="text-gradient block sm:inline">
+                Isnu Munandar
+              </span>
             </h1>
 
             <motion.div

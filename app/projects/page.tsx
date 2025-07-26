@@ -5,7 +5,7 @@ import { Header } from "@/components/ui/Header";
 import { ProjectsPageContent } from "@/components/pages/ProjectsPageContent";
 
 export const metadata: Metadata = {
-  title: "Projects - Your Name Portfolio",
+  title: "Projects - Isnu Munandar Portfolio",
   description:
     "Explore my portfolio of projects showcasing modern web development, full-stack applications, and innovative solutions.",
   keywords: [
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     "full-stack",
   ],
   openGraph: {
-    title: "Projects - Your Name Portfolio",
+    title: "Projects - Isnu Munandar Portfolio",
     description:
       "Explore my portfolio of projects showcasing modern web development.",
     url: "/projects",

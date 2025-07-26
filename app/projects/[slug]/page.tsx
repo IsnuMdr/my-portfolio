@@ -31,7 +31,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${project.title} - Your Name Portfolio`,
+    title: `${project.title} - Isnu Munandar Portfolio`,
     description: project.description,
     keywords: [...project.technologies, "project", "portfolio"],
     openGraph: {

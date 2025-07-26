@@ -16,15 +16,18 @@ import {
   Mail,
   Bookmark,
 } from "lucide-react";
+import { redirect, usePathname, useRouter } from "next/navigation";
 
 export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
 
+  const router = useRouter();
+  const pathname = usePathname();
+
   // Updated navigation items to include experience
   const navItems = [
-    { href: "#home", label: "Home", icon: Home },
     { href: "#about", label: "About", icon: User },
     { href: "#projects", label: "Projects", icon: Briefcase },
     { href: "#experience", label: "Experience", icon: Bookmark },
@@ -33,13 +36,13 @@ export const Header = () => {
   ];
 
   const socialLinks = [
-    { icon: Github, href: "https://github.com/yourusername", label: "GitHub" },
+    { icon: Github, href: "https://github.com/IsnuMdr", label: "GitHub" },
     {
       icon: Linkedin,
       href: "https://linkedin.com/in/yourusername",
       label: "LinkedIn",
     },
-    { icon: Mail, href: "mailto:your.email@example.com", label: "Email" },
+    { icon: Mail, href: "mailto:isnu.mdr@gmail.com", label: "Email" },
   ];
 
   // Improved active section detection
@@ -176,7 +179,9 @@ export const Header = () => {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <motion.button
-              onClick={() => handleNavClick("#home")}
+              onClick={() =>
+                pathname === "/" ? handleNavClick("#home") : redirect("/")
+              }
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="flex items-center gap-3 group"
@@ -195,7 +200,7 @@ export const Header = () => {
 
               <div className="hidden sm:block">
                 <div className="text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
-                  Your Name
+                  Isnu Munandar
                 </div>
                 <div className="text-xs text-gray-500 font-medium group-hover:text-primary-600 transition-colors duration-300">
                   Software Engineer

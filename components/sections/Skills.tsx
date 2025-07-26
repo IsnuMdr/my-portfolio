@@ -12,185 +12,14 @@ import {
   Trophy,
   Wrench,
 } from "lucide-react";
-
-interface Skill {
-  id: string;
-  name: string;
-  category: string;
-  level: number;
-  experience: string;
-  description: string;
-}
-
-const skillsData: Skill[] = [
-  // Frontend Skills
-  {
-    id: "1",
-    name: "JavaScript",
-    category: "Frontend",
-    level: 95,
-    experience: "3+ years",
-    description:
-      "Expert in modern ES6+ features, async programming, and frameworks",
-  },
-  {
-    id: "2",
-    name: "TypeScript",
-    category: "Frontend",
-    level: 90,
-    experience: "2+ years",
-    description:
-      "Strong typing, interfaces, generics, and advanced type manipulation",
-  },
-  {
-    id: "3",
-    name: "React",
-    category: "Frontend",
-    level: 92,
-    experience: "3+ years",
-    description: "Hooks, Context API, performance optimization, and testing",
-  },
-  {
-    id: "4",
-    name: "Next.js",
-    category: "Frontend",
-    level: 88,
-    experience: "2+ years",
-    description: "SSR, SSG, API routes, and deployment optimization",
-  },
-  {
-    id: "5",
-    name: "Tailwind CSS",
-    category: "Frontend",
-    level: 90,
-    experience: "2+ years",
-    description:
-      "Utility-first CSS, responsive design, and custom configurations",
-  },
-  {
-    id: "6",
-    name: "Vue.js",
-    category: "Frontend",
-    level: 75,
-    experience: "1+ years",
-    description: "Component-based architecture and Vuex state management",
-  },
-  // Backend Skills
-  {
-    id: "7",
-    name: "Node.js",
-    category: "Backend",
-    level: 85,
-    experience: "2+ years",
-    description:
-      "Express.js, API development, middleware, and performance tuning",
-  },
-  {
-    id: "8",
-    name: "Python",
-    category: "Backend",
-    level: 80,
-    experience: "2+ years",
-    description: "Django, Flask, data processing, and automation scripts",
-  },
-  {
-    id: "9",
-    name: "PHP",
-    category: "Backend",
-    level: 70,
-    experience: "1+ years",
-    description: "Laravel framework and RESTful API development",
-  },
-  // Database Skills
-  {
-    id: "10",
-    name: "PostgreSQL",
-    category: "Database",
-    level: 80,
-    experience: "2+ years",
-    description: "Database design, optimization, queries, and migrations",
-  },
-  {
-    id: "11",
-    name: "Prisma",
-    category: "Database",
-    level: 85,
-    experience: "1+ years",
-    description:
-      "ORM, schema design, migrations, and type-safe database access",
-  },
-  {
-    id: "12",
-    name: "MongoDB",
-    category: "Database",
-    level: 75,
-    experience: "1+ years",
-    description: "NoSQL database design, aggregation pipelines, and indexing",
-  },
-  {
-    id: "13",
-    name: "Redis",
-    category: "Database",
-    level: 65,
-    experience: "1+ years",
-    description: "Caching strategies and session management",
-  },
-  // DevOps Skills
-  {
-    id: "14",
-    name: "Docker",
-    category: "DevOps",
-    level: 70,
-    experience: "1+ years",
-    description: "Containerization, Docker Compose, and deployment strategies",
-  },
-  {
-    id: "15",
-    name: "AWS",
-    category: "DevOps",
-    level: 65,
-    experience: "1+ years",
-    description: "EC2, S3, Lambda, RDS, and serverless architectures",
-  },
-  {
-    id: "16",
-    name: "Vercel",
-    category: "DevOps",
-    level: 80,
-    experience: "2+ years",
-    description: "Deployment, edge functions, and performance optimization",
-  },
-  // Tools Skills
-  {
-    id: "17",
-    name: "Git",
-    category: "Tools",
-    level: 90,
-    experience: "3+ years",
-    description:
-      "Version control, branching strategies, and collaborative workflows",
-  },
-  {
-    id: "18",
-    name: "Figma",
-    category: "Tools",
-    level: 75,
-    experience: "2+ years",
-    description: "UI/UX design, prototyping, and design system creation",
-  },
-  {
-    id: "19",
-    name: "VS Code",
-    category: "Tools",
-    level: 95,
-    experience: "3+ years",
-    description: "Advanced usage, extensions, and workflow optimization",
-  },
-];
+import { useSkills } from "@/lib/hooks/useSkills";
+import { Skill } from "@/types/skills";
 
 export const Skills = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
+
+  const { skills } = useSkills();
 
   // Categories with icons and counts
   const categories = useMemo(() => {
@@ -208,12 +37,12 @@ export const Skills = () => {
         label: "All Skills",
         icon: Zap,
         color: "text-purple-600",
-        count: skillsData.length,
+        count: skills.length,
       },
     ];
 
     // Get unique categories from skills
-    const uniqueCategories = [...new Set(skillsData.map((s) => s.category))];
+    const uniqueCategories = [...new Set(skills.map((s) => s.category))];
     const categoryOptions = uniqueCategories.map((cat) => ({
       id: cat,
       label: cat,
@@ -221,7 +50,7 @@ export const Skills = () => {
       color:
         categoryConfig[cat as keyof typeof categoryConfig]?.color ||
         "text-gray-600",
-      count: skillsData.filter((s) => s.category === cat).length,
+      count: skills.filter((s) => s.category === cat).length,
     }));
 
     return [...allCategories, ...categoryOptions];
@@ -232,11 +61,9 @@ export const Skills = () => {
     let filtered: Skill[] = [];
 
     if (selectedCategory === "all") {
-      filtered = skillsData;
+      filtered = skills;
     } else {
-      filtered = skillsData.filter(
-        (skill) => skill.category === selectedCategory
-      );
+      filtered = skills.filter((skill) => skill.category === selectedCategory);
     }
     return filtered;
   }, [selectedCategory]);
@@ -429,21 +256,21 @@ export const Skills = () => {
             {[
               {
                 label: "Technologies",
-                value: skillsData.length.toString(),
+                value: skills.length.toString(),
                 icon: Code,
               },
               {
                 label: "Avg Proficiency",
                 value: `${Math.round(
-                  skillsData.reduce((acc, skill) => acc + skill.level, 0) /
-                    skillsData.length
+                  skills.reduce((acc, skill) => acc + skill.level, 0) /
+                    skills.length
                 )}%`,
                 icon: Trophy,
               },
               { label: "Categories", value: categories.length - 1, icon: Zap }, // -1 to exclude 'all'
               {
                 label: "Expert Level",
-                value: skillsData.filter((s) => s.level >= 90).length,
+                value: skills.filter((s) => s.level >= 90).length,
                 icon: Palette,
               },
             ].map((stat, index) => {

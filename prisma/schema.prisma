@@ -8,40 +8,86 @@ datasource db {
 }
 
 model Project {
-  id           String   @id @default(cuid())
-  title        String
-  description  String
-  imageUrl     String?
-  demoUrl      String?
-  githubUrl    String?
-  technologies String[]
-  featured     Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id              String               @id @default(cuid())
+  slug            String
+  title           String
+  description     String
+  longDescription String
+  challenge       String?
+  solution        String?
+  results         String[]
+  imageUrl        String?
+  images          ProjectImage[]
+  demoUrl         String?
+  githubUrl       String?
+  technologies    String[]
+  features        String[]
+  category        ProjectCategories    @default(fullstack)
+  featured        Boolean              @default(false)
+  completedAt     DateTime
+  duration        String
+  role            String?
+  teamSize        Int
+  testimonial     ProjectTestimonial[]
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
 
   @@map("projects")
 }
 
+model ProjectTestimonial {
+  id        String  @id @default(cuid())
+  quote     String
+  author    String
+  position  String
+  company   String?
+  projectId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Project   Project  @relation(fields: [projectId], references: [id])
+
+  @@map("project_testimonial")
+}
+
+model ProjectImage {
+  id        String @id @default(cuid())
+  imageUrl  String
+  projectId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Project   Project  @relation(fields: [projectId], references: [id])
+
+  @@map("project_images")
+}
+
 model Experience {
-  id          String    @id @default(cuid())
-  company     String
-  position    String
-  description String
-  startDate   DateTime
-  endDate     DateTime?
-  current     Boolean   @default(false)
-  location    String?
-  createdAt   DateTime  @default(now())
+  id           String         @id @default(cuid())
+  company      String
+  position     String
+  description  String
+  achievements String[]
+  startDate    String
+  endDate      String?
+  current      Boolean
+  location     String?
+  companyUrl   String?
+  companyLogo  String?
+  technologies String[]
+  type         ExperienceType @default(fullTime)
+  createdAt    DateTime       @default(now())
 
   @@map("experiences")
 }
 
 model Skill {
-  id       String  @id @default(cuid())
-  name     String
-  category String
-  level    Int     @default(1) // 1-5 scale
-  icon     String?
+  id          String  @id @default(cuid())
+  name        String
+  category    String
+  level       Int     @default(1) // 1-100 scale
+  experience  String?
+  description String?
 
   @@map("skills")
 }
@@ -54,4 +100,18 @@ model Contact {
   createdAt DateTime @default(now())
 
   @@map("contacts")
+}
+
+enum ProjectCategories {
+  fullstack
+  backend
+  frontend
+  mobile
+}
+
+enum ExperienceType {
+  fullTime
+  partTime
+  contract
+  internship
 }

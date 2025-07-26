@@ -1,15 +1,5 @@
+import { Project } from "@/types/project";
 import { useState, useEffect } from "react";
-
-interface Project {
-  id: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  demoUrl?: string;
-  githubUrl?: string;
-  technologies: string[];
-  featured: boolean;
-}
 
 export const useProjects = () => {
   const [projects, setProjects] = useState<Project[]>([]);

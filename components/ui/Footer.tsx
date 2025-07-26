@@ -136,7 +136,7 @@ export const Footer = () => {
                   </motion.div>
                   <div>
                     <div className="text-2xl font-bold bg-gradient-to-r from-primary-400 to-accent-400 bg-clip-text text-transparent">
-                      Your Name
+                      Isnu Munandar
                     </div>
                     <div className="text-gray-400 text-sm">
                       Software Engineer
@@ -337,7 +337,8 @@ export const Footer = () => {
                 <Coffee size={16} className="text-amber-500" />
               </motion.div>
               <span>
-                by <span className="font-semibold text-white">Your Name</span>
+                by{" "}
+                <span className="font-semibold text-white">Isnu Munandar</span>
               </span>
             </div>
 

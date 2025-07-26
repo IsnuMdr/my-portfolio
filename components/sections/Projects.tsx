@@ -4,161 +4,52 @@ import { useState, useMemo, useCallback } from "react";
 import { ExternalLink, Github, Eye, Calendar } from "lucide-react";
 import { TechIcons } from "../ui/TechIcons";
 import { AnimatedSection } from "../animations/AnimatedSection";
-
-interface Project {
-  id: string;
-  title: string;
-  description: string;
-  longDescription: string;
-  imageUrl: string;
-  demoUrl?: string;
-  githubUrl?: string;
-  technologies: string[];
-  featured: boolean;
-  category: string;
-  completedAt: string;
-}
-
-const projectsData: Project[] = [
-  {
-    id: "1",
-    title: "E-Commerce Platform",
-    description:
-      "A modern, full-stack e-commerce solution with seamless user experience",
-    longDescription:
-      "Complete e-commerce platform built with Next.js, featuring user authentication, payment processing, inventory management, and admin dashboard. Includes real-time notifications and responsive design.",
-    imageUrl: "/api/placeholder/600/400",
-    demoUrl: "https://demo.com",
-    githubUrl: "https://github.com",
-    technologies: [
-      "Next.js",
-      "TypeScript",
-      "Tailwind CSS",
-      "Prisma",
-      "PostgreSQL",
-      "Stripe",
-    ],
-    featured: true,
-    category: "fullstack",
-    completedAt: "2024-03",
-  },
-  {
-    id: "2",
-    title: "AI Chat Interface",
-    description:
-      "Intelligent chatbot with natural language processing capabilities",
-    longDescription:
-      "Modern chat interface powered by AI, featuring real-time messaging, conversation history, and smart response suggestions. Built with React and integrated with OpenAI API.",
-    imageUrl: "/api/placeholder/600/400",
-    demoUrl: "https://demo.com",
-    githubUrl: "https://github.com",
-    technologies: ["React", "Node.js", "OpenAI API", "Socket.io", "MongoDB"],
-    featured: true,
-    category: "frontend",
-    completedAt: "2024-02",
-  },
-  {
-    id: "3",
-    title: "Task Management System",
-    description: "Collaborative project management tool with real-time updates",
-    longDescription:
-      "Comprehensive task management system with team collaboration features, real-time updates, file sharing, and progress tracking. Includes mobile-responsive design.",
-    imageUrl: "/api/placeholder/600/400",
-    demoUrl: "https://demo.com",
-    githubUrl: "https://github.com",
-    technologies: ["Vue.js", "Express.js", "MongoDB", "Socket.io"],
-    featured: false,
-    category: "fullstack",
-    completedAt: "2024-01",
-  },
-  {
-    id: "4",
-    title: "Weather Analytics Dashboard",
-    description:
-      "Data visualization dashboard for weather patterns and forecasts",
-    longDescription:
-      "Interactive dashboard displaying weather analytics with beautiful charts, forecasting capabilities, and location-based data. Features responsive design and real-time updates.",
-    imageUrl: "/api/placeholder/600/400",
-    demoUrl: "https://demo.com",
-    githubUrl: "https://github.com",
-    technologies: ["React", "D3.js", "Weather API", "Chart.js"],
-    featured: false,
-    category: "frontend",
-    completedAt: "2023-12",
-  },
-  {
-    id: "5",
-    title: "REST API Server",
-    description: "Scalable REST API with authentication and rate limiting",
-    longDescription:
-      "High-performance REST API server built with Node.js and Express. Features JWT authentication, rate limiting, data validation, and comprehensive documentation.",
-    imageUrl: "/api/placeholder/600/400",
-    demoUrl: "https://demo.com",
-    githubUrl: "https://github.com",
-    technologies: ["Node.js", "Express.js", "PostgreSQL", "JWT", "Swagger"],
-    featured: false,
-    category: "backend",
-    completedAt: "2023-11",
-  },
-  {
-    id: "6",
-    title: "Mobile Banking App",
-    description:
-      "Secure mobile banking application with biometric authentication",
-    longDescription:
-      "React Native mobile app for banking operations with fingerprint authentication, real-time transactions, and push notifications.",
-    imageUrl: "/api/placeholder/600/400",
-    demoUrl: "https://demo.com",
-    githubUrl: "https://github.com",
-    technologies: ["React Native", "Firebase", "Redux", "Expo"],
-    featured: true,
-    category: "mobile",
-    completedAt: "2023-10",
-  },
-];
+import { useProjects } from "@/lib/hooks/useProjects";
+import { Project } from "@/types/project";
 
 export const Projects = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [hoveredProject, setHoveredProject] = useState<string | null>(null);
+  const { projects } = useProjects();
 
   // Categories with counts
   const categories = useMemo(() => {
     const allCategories = [
-      { id: "all", label: "All Projects", count: projectsData.length },
+      { id: "all", label: "All Projects", count: projects.length },
       {
         id: "featured",
         label: "Featured",
-        count: projectsData.filter((p) => p.featured).length,
+        count: projects.filter((p) => p.featured).length,
       },
     ];
 
     // Get unique categories from projects
-    const uniqueCategories = [...new Set(projectsData.map((p) => p.category))];
+    const uniqueCategories = [...new Set(projects.map((p) => p.category))];
     const categoryOptions = uniqueCategories.map((cat) => ({
       id: cat,
       label: cat.charAt(0).toUpperCase() + cat.slice(1),
-      count: projectsData.filter((p) => p.category === cat).length,
+      count: projects.filter((p) => p.category === cat).length,
     }));
 
     return [...allCategories, ...categoryOptions];
-  }, []);
+  }, [projects]);
 
   // Filtered projects with proper memoization
   const filteredProjects = useMemo(() => {
     let filtered: Project[] = [];
 
     if (selectedCategory === "all") {
-      filtered = projectsData;
+      filtered = projects;
     } else if (selectedCategory === "featured") {
-      filtered = projectsData.filter((project) => project.featured);
+      filtered = projects.filter((project) => project.featured);
     } else {
-      filtered = projectsData.filter(
+      filtered = projects.filter(
         (project) => project.category === selectedCategory
       );
     }
 
     return filtered;
-  }, [selectedCategory]);
+  }, [projects, selectedCategory]);
 
   // Handle category change
   const handleCategoryChange = useCallback((categoryId: string) => {
@@ -416,7 +307,7 @@ export const Projects = () => {
               whileTap={{ scale: 0.95 }}
               className="btn-outline-elegant"
             >
-              View All Projects ({projectsData.length})
+              View All Projects ({projects.length})
             </motion.a>
           </div>
         </AnimatedSection>
