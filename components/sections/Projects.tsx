@@ -1,5 +1,5 @@
 "use client";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { useState, useMemo, useCallback } from "react";
 import { ExternalLink, Github, Eye, Calendar } from "lucide-react";
 import { TechIcons } from "../ui/TechIcons";
@@ -68,7 +68,7 @@ export const Projects = () => {
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 50, scale: 0.9 },
     visible: {
       opacity: 1,

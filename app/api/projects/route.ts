@@ -1,9 +1,23 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { Prisma, ProjectCategories } from "@prisma/client";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const isFeatured = searchParams.get("featured") === "true";
+  const category = searchParams.get("category") as ProjectCategories;
+
   try {
+    let whereCondition: Prisma.ProjectWhereInput = {};
+
+    if (isFeatured) {
+      whereCondition = { featured: true };
+    } else if (category) {
+      whereCondition = { category };
+    }
+
     const projects = await prisma.project.findMany({
+      where: whereCondition,
       orderBy: {
         createdAt: "desc",
       },
@@ -11,7 +25,7 @@ export async function GET() {
     return NextResponse.json(projects);
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to fetch projects" },
+      { error: error instanceof Error ? error.message : "An error occurred" },
       { status: 500 }
     );
   }
@@ -26,7 +40,7 @@ export async function POST(request: Request) {
     return NextResponse.json(project, { status: 201 });
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to create project" },
+      { error: error instanceof Error ? error.message : "An error occurred" },
       { status: 500 }
     );
   }

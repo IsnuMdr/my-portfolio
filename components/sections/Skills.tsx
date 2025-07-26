@@ -1,5 +1,5 @@
 "use client";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { useState, useMemo, useCallback } from "react";
 import { TechIcons } from "../ui/TechIcons";
 import { AnimatedSection } from "../animations/AnimatedSection";
@@ -54,7 +54,7 @@ export const Skills = () => {
     }));
 
     return [...allCategories, ...categoryOptions];
-  }, []);
+  }, [skills]);
 
   // Filtered skills with proper memoization
   const filteredSkills = useMemo(() => {
@@ -66,7 +66,7 @@ export const Skills = () => {
       filtered = skills.filter((skill) => skill.category === selectedCategory);
     }
     return filtered;
-  }, [selectedCategory]);
+  }, [selectedCategory, skills]);
 
   // Handle category change
   const handleCategoryChange = useCallback((categoryId: string) => {
@@ -86,7 +86,7 @@ export const Skills = () => {
     },
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { opacity: 0, y: 30, scale: 0.9 },
     visible: {
       opacity: 1,

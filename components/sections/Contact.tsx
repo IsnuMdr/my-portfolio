@@ -6,7 +6,6 @@ import {
   Mail,
   Phone,
   MapPin,
-  Send,
   MessageCircle,
   Calendar,
   ExternalLink,
@@ -20,9 +19,9 @@ export const Contact = () => {
     message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    "idle" | "success" | "error"
-  >("idle");
+  // const [submitStatus, setSubmitStatus] = useState<
+  //   "idle" | "success" | "error"
+  // >("idle");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,15 +36,16 @@ export const Contact = () => {
 
       if (response.ok) {
         setFormData({ name: "", email: "", subject: "", message: "" });
-        setSubmitStatus("success");
-        setTimeout(() => setSubmitStatus("idle"), 5000);
+        // setSubmitStatus("success");
+        // setTimeout(() => setSubmitStatus("idle"), 5000);
       } else {
-        setSubmitStatus("error");
-        setTimeout(() => setSubmitStatus("idle"), 5000);
+        // setSubmitStatus("error");
+        // setTimeout(() => setSubmitStatus("idle"), 5000);
       }
     } catch (error) {
-      setSubmitStatus("error");
-      setTimeout(() => setSubmitStatus("idle"), 5000);
+      console.error(error);
+      // setSubmitStatus("error");
+      // setTimeout(() => setSubmitStatus("idle"), 5000);
     } finally {
       setIsSubmitting(false);
     }

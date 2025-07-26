@@ -9,21 +9,19 @@ import {
   Briefcase,
   Award,
   MessageCircle,
-  Home,
   Download,
   Github,
   Linkedin,
   Mail,
   Bookmark,
 } from "lucide-react";
-import { redirect, usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 
 export const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
 
-  const router = useRouter();
   const pathname = usePathname();
 
   // Updated navigation items to include experience
@@ -217,7 +215,11 @@ export const Header = () => {
                 return (
                   <motion.button
                     key={item.href}
-                    onClick={() => handleNavClick(item.href)}
+                    onClick={() =>
+                      item.href === "#projects" && pathname !== "/"
+                        ? redirect("/projects")
+                        : handleNavClick(item.href)
+                    }
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1, duration: 0.5 }}

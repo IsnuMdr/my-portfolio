@@ -4,20 +4,7 @@ import { useState } from "react";
 import { ExternalLink, Github, Eye, Calendar, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { TechIcons } from "./TechIcons";
-
-interface Project {
-  id: string;
-  slug: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  demoUrl?: string;
-  githubUrl?: string;
-  technologies: string[];
-  category: string;
-  featured: boolean;
-  completedAt: string;
-}
+import { Project } from "@/types/project";
 
 interface ProjectCardProps {
   project: Project;
@@ -51,7 +38,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
         >
           <div className="flex gap-4">
             <Link
-              href={`/projects/${project.slug}`}
+              href={`/projects/${project.id}`}
               className="p-3 bg-white/90 backdrop-blur-sm rounded-full text-gray-800 shadow-soft hover:shadow-medium transition-all duration-300"
             >
               <Eye size={20} />
@@ -141,7 +128,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
 
         {/* View Details Link */}
         <Link
-          href={`/projects/${project.slug}`}
+          href={`/projects/${project.id}`}
           className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium transition-colors duration-300 group"
         >
           View Details

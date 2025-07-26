@@ -20,7 +20,7 @@ export const trackEvent = (
 };
 
 // Web Vitals tracking
-export const trackWebVitals = (metric: any) => {
+export const trackWebVitals = (metric: { name: string; value: number }) => {
   if (typeof window !== "undefined" && window.gtag) {
     window.gtag("event", metric.name, {
       value: Math.round(metric.value),

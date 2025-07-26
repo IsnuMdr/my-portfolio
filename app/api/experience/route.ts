@@ -11,7 +11,7 @@ export async function GET() {
     return NextResponse.json(experiences);
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to fetch experiences" },
+      { error: error instanceof Error ? error.message : "An error occurred" },
       { status: 500 }
     );
   }
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
     return NextResponse.json(experience, { status: 201 });
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to create experience" },
+      { error: error instanceof Error ? error.message : "An error occurred" },
       { status: 500 }
     );
   }

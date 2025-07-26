@@ -14,6 +14,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useExperience } from "@/lib/hooks/useExperience";
+import Image from "next/image";
 
 export const Experience = () => {
   const [hoveredExperience, setHoveredExperience] = useState<string | null>(
@@ -139,7 +140,7 @@ export const Experience = () => {
                             whileHover={{ scale: 1.1, rotate: 5 }}
                             className="w-16 h-16 rounded-xl overflow-hidden shadow-soft flex-shrink-0"
                           >
-                            <img
+                            <Image
                               src={experience.companyLogo}
                               alt={`${experience.company} logo`}
                               className="w-full h-full object-cover"

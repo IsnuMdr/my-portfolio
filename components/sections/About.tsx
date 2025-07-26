@@ -10,9 +10,9 @@ import {
   Heart,
   Award,
   MapPin,
-  Calendar,
   Mail,
 } from "lucide-react";
+import Image from "next/image";
 
 export const About = () => {
   const [activeTab, setActiveTab] = useState("story");
@@ -246,7 +246,7 @@ export const About = () => {
                   transition={{ duration: 0.3 }}
                   className="relative"
                 >
-                  <img
+                  <Image
                     src="https://avatars.githubusercontent.com/u/20652209?v=4"
                     alt="Profile"
                     className="w-full aspect-[4/5] object-cover rounded-3xl shadow-large"

@@ -16,7 +16,7 @@ export const LoadingSpinner = ({
     lg: "w-12 h-12",
   };
 
-  const colorClasses = {
+  const colorClasses: { [key: string]: string } = {
     primary: "border-primary-600",
     white: "border-white",
     gray: "border-gray-600",

@@ -2,27 +2,17 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/ui/Footer";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
-import { getAllProjects, getProjectBySlug } from "@/lib/data/projects";
+import { getProjectById } from "@/lib/data/projects";
 import { Header } from "@/components/ui/Header";
 import { ProjectDetailContent } from "@/components/pages/ProjectDetailContent";
 
-interface ProjectDetailPageProps {
-  params: {
-    slug: string;
-  };
-}
-
-export async function generateStaticParams() {
-  const projects = getAllProjects();
-  return projects.map((project) => ({
-    slug: project.slug,
-  }));
-}
-
 export async function generateMetadata({
   params,
-}: ProjectDetailPageProps): Promise<Metadata> {
-  const project = getProjectBySlug(params.slug);
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const id = (await params).id;
+  const project = await getProjectById(id);
 
   if (!project) {
     return {
@@ -37,7 +27,7 @@ export async function generateMetadata({
     openGraph: {
       title: project.title,
       description: project.description,
-      url: `/projects/${project.slug}`,
+      url: `/projects/${project.id}`,
       type: "article",
       images: [
         {
@@ -51,8 +41,14 @@ export async function generateMetadata({
   };
 }
 
-export default function ProjectDetailPage({ params }: ProjectDetailPageProps) {
-  const project = getProjectBySlug(params.slug);
+export default async function ProjectDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const id = (await params).id;
+
+  const project = await getProjectById(id);
 
   if (!project) {
     notFound();

@@ -1,4 +1,4 @@
-("use client");
+"use client";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import {
@@ -44,12 +44,12 @@ export const ProjectHoverCard = ({
       navigator.share({
         title: project.title,
         text: project.description,
-        url: `/projects/${project.slug}`,
+        url: `/projects/${project.id}`,
       });
     } else {
       // Fallback untuk browser yang tidak support Web Share API
       navigator.clipboard.writeText(
-        `${window.location.origin}/projects/${project.slug}`
+        `${window.location.origin}/projects/${project.id}`
       );
     }
   };
@@ -141,7 +141,7 @@ export const ProjectHoverCard = ({
               transition={{ delay: 0.1 }}
             >
               <Link
-                href={`/projects/${project.slug}`}
+                href={`/projects/${project.id}`}
                 className="p-4 bg-white/90 backdrop-blur-sm rounded-full text-gray-800 shadow-soft hover:shadow-medium transition-all duration-300"
               >
                 <Eye size={24} />
@@ -257,7 +257,7 @@ export const ProjectHoverCard = ({
           transition={{ duration: 0.3 }}
         >
           <Link
-            href={`/projects/${project.slug}`}
+            href={`/projects/${project.id}`}
             className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium transition-colors duration-300 group"
           >
             View Details

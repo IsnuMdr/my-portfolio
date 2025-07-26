@@ -11,7 +11,7 @@ export async function GET() {
     return NextResponse.json(skills);
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to fetch skills" },
+      { error: error instanceof Error ? error.message : "An error occurred" },
       { status: 500 }
     );
   }
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     return NextResponse.json(skill, { status: 201 });
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to create skill" },
+      { error: error instanceof Error ? error.message : "An error occurred" },
       { status: 500 }
     );
   }

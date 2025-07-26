@@ -1,4 +1,3 @@
-// components/pages/ProjectDetailContent.tsx - Complete project detail page
 "use client";
 import { motion } from "framer-motion";
 import { useState } from "react";
@@ -10,50 +9,20 @@ import {
   Clock,
   User,
   Users,
-  Quote,
   ChevronLeft,
   ChevronRight,
   Star,
   Check,
-  Link as LinkIcon,
-  Download,
   Share2,
 } from "lucide-react";
 import Link from "next/link";
 import { AnimatedSection } from "../animations/AnimatedSection";
 import { TechIcons } from "../ui/TechIcons";
-
-interface ProjectDetail {
-  id: string;
-  slug: string;
-  title: string;
-  description: string;
-  longDescription: string;
-  challenge: string;
-  solution: string;
-  results: string[];
-  imageUrl: string;
-  images: string[];
-  demoUrl?: string;
-  githubUrl?: string;
-  technologies: string[];
-  features: string[];
-  category: string;
-  featured: boolean;
-  completedAt: string;
-  duration: string;
-  role: string;
-  teamSize?: number;
-  testimonial?: {
-    quote: string;
-    author: string;
-    position: string;
-    company: string;
-  };
-}
+import { Project } from "@/types/project";
+import Image from "next/image";
 
 interface ProjectDetailContentProps {
-  project: ProjectDetail;
+  project: Project;
 }
 
 export const ProjectDetailContent = ({
@@ -64,13 +33,13 @@ export const ProjectDetailContent = ({
 
   const nextImage = () => {
     setCurrentImageIndex((prev) =>
-      prev === project.images.length - 1 ? 0 : prev + 1
+      prev === project.images?.length - 1 ? 0 : prev + 1
     );
   };
 
   const prevImage = () => {
     setCurrentImageIndex((prev) =>
-      prev === 0 ? project.images.length - 1 : prev - 1
+      prev === 0 ? project.images?.length - 1 : prev - 1
     );
   };
 
@@ -84,6 +53,7 @@ export const ProjectDetailContent = ({
         });
       } catch (error) {
         // User cancelled sharing
+        console.log("User cancelled sharing:", error);
       }
     } else {
       // Fallback - copy to clipboard
@@ -270,7 +240,7 @@ export const ProjectDetailContent = ({
                 <div className="relative aspect-project rounded-2xl overflow-hidden shadow-large mb-4">
                   <motion.img
                     key={currentImageIndex}
-                    src={project.images[currentImageIndex]}
+                    src={project.imageUrl}
                     alt={`${project.title} - Image ${currentImageIndex + 1}`}
                     className="w-full h-full object-cover cursor-zoom-in"
                     initial={{ opacity: 0, scale: 1.1 }}
@@ -280,7 +250,7 @@ export const ProjectDetailContent = ({
                   />
 
                   {/* Navigation Arrows */}
-                  {project.images.length > 1 && (
+                  {project.images && project.images.length > 1 && (
                     <>
                       <motion.button
                         onClick={prevImage}
@@ -303,14 +273,14 @@ export const ProjectDetailContent = ({
                   )}
 
                   {/* Image Counter */}
-                  {project.images.length > 1 && (
+                  {project.images && project.images.length > 1 && (
                     <div className="absolute top-4 right-4 px-3 py-1 bg-black/50 backdrop-blur-sm text-white text-sm rounded-full">
                       {currentImageIndex + 1} / {project.images.length}
                     </div>
                   )}
 
                   {/* Image Indicators */}
-                  {project.images.length > 1 && (
+                  {project.images && project.images.length > 1 && (
                     <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
                       {project.images.map((_, index) => (
                         <button
@@ -328,7 +298,7 @@ export const ProjectDetailContent = ({
                 </div>
 
                 {/* Thumbnail Navigation */}
-                {project.images.length > 1 && (
+                {project.images && project.images.length > 1 && (
                   <div className="grid grid-cols-4 gap-2">
                     {project.images.slice(0, 4).map((image, index) => (
                       <motion.button
@@ -342,8 +312,8 @@ export const ProjectDetailContent = ({
                             : "opacity-70 hover:opacity-100"
                         }`}
                       >
-                        <img
-                          src={image}
+                        <Image
+                          src={project.imageUrl}
                           alt={`${project.title} thumbnail ${index + 1}`}
                           className="w-full h-full object-cover"
                         />
@@ -511,7 +481,7 @@ export const ProjectDetailContent = ({
       </section>
 
       {/* Testimonial Section */}
-      {project.testimonial && (
+      {/* {project.testimonial.length > 0 && (
         <section className="py-16 bg-white">
           <div className="container-elegant">
             <AnimatedSection>
@@ -538,7 +508,7 @@ export const ProjectDetailContent = ({
             </AnimatedSection>
           </div>
         </section>
-      )}
+      )} */}
 
       {/* Project Overview */}
       <section className="py-16 bg-gradient-section">
@@ -601,8 +571,8 @@ export const ProjectDetailContent = ({
             exit={{ scale: 0.5 }}
             className="relative max-w-7xl max-h-full"
           >
-            <img
-              src={project.images[currentImageIndex]}
+            <Image
+              src={project.images[currentImageIndex].imageUrl}
               alt={`${project.title} - Full size`}
               className="max-w-full max-h-full object-contain rounded-lg"
             />

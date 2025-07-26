@@ -59,7 +59,7 @@ export const Hero = () => {
       <div className="absolute inset-0 bg-pattern opacity-40"></div>
 
       {/* Floating tech icons */}
-      {floatingTechs.map((tech, index) => (
+      {floatingTechs.map((tech) => (
         <motion.div
           key={tech.name}
           initial={{ opacity: 0, scale: 0 }}

@@ -11,7 +11,6 @@ import {
   ArrowUp,
   MapPin,
   Phone,
-  Calendar,
 } from "lucide-react";
 import { TechIcons } from "./TechIcons";
 
@@ -84,7 +83,7 @@ export const Footer = () => {
   };
 
   const handleNavClick = (href: string) => {
-    const element = document.querySelector(href);
+    const element: HTMLElement | null = document.querySelector(href);
     if (element) {
       const offsetTop = element.offsetTop - 80;
       window.scrollTo({

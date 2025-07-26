@@ -1,59 +1,59 @@
 "use client";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useMemo, useCallback } from "react";
-import { Search, Filter, Grid, List } from "lucide-react";
+import { Search, Grid, List } from "lucide-react";
 import { AnimatedSection } from "../animations/AnimatedSection";
 import { ProjectCard } from "../ui/ProjectCard";
 import { ProjectListItem } from "../ui/ProjectListItem";
-import { getAllProjects, getProjectsByCategory } from "@/lib/data/projects";
+import { useProjects } from "@/lib/hooks/useProjects";
 
 export const ProjectsPageContent = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const allProjects = getAllProjects();
+  const { projects } = useProjects();
 
   // Categories with counts
   const categories = useMemo(() => {
     const allCategories = [
-      { id: "all", label: "All Projects", count: allProjects.length },
+      { id: "all", label: "All Projects", count: projects.length },
       {
         id: "featured",
         label: "Featured",
-        count: allProjects.filter((p) => p.featured).length,
+        count: projects.filter((p) => p.featured).length,
       },
     ];
 
-    const uniqueCategories = [...new Set(allProjects.map((p) => p.category))];
+    const uniqueCategories = [...new Set(projects.map((p) => p.category))];
     const categoryOptions = uniqueCategories.map((cat) => ({
       id: cat,
       label: cat.charAt(0).toUpperCase() + cat.slice(1),
-      count: allProjects.filter((p) => p.category === cat).length,
+      count: projects.filter((p) => p.category === cat).length,
     }));
 
     return [...allCategories, ...categoryOptions];
-  }, [allProjects]);
+  }, [projects]);
 
   // Filtered and searched projects
-  const filteredProjects = useMemo(() => {
-    let filtered = getProjectsByCategory(selectedCategory);
+  // const filteredProjects = useMemo(() => {
+  //   let filtered = getProjectsByCategory(selectedCategory);
 
-    if (searchQuery) {
-      filtered = filtered.filter(
-        (project) =>
-          project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          project.description
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase()) ||
-          project.technologies.some((tech) =>
-            tech.toLowerCase().includes(searchQuery.toLowerCase())
-          )
-      );
-    }
+  //   if (searchQuery) {
+  //     filtered = filtered.filter(
+  //       (project) =>
+  //         project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //         project.description
+  //           .toLowerCase()
+  //           .includes(searchQuery.toLowerCase()) ||
+  //         project.technologies.some((tech) =>
+  //           tech.toLowerCase().includes(searchQuery.toLowerCase())
+  //         )
+  //     );
+  //   }
 
-    return filtered;
-  }, [selectedCategory, searchQuery]);
+  //   return filtered;
+  // }, [selectedCategory, searchQuery]);
 
   const handleCategoryChange = useCallback((categoryId: string) => {
     setSelectedCategory(categoryId);
@@ -164,8 +164,7 @@ export const ProjectsPageContent = () => {
           {/* Results Count */}
           <div className="mb-8">
             <p className="text-gray-600">
-              Showing{" "}
-              <span className="font-semibold">{filteredProjects.length}</span>{" "}
+              Showing <span className="font-semibold">{projects.length}</span>{" "}
               projects
               {searchQuery && ` for "${searchQuery}"`}
               {selectedCategory !== "all" &&
@@ -190,8 +189,8 @@ export const ProjectsPageContent = () => {
                     : "space-y-6"
                 }
               >
-                {filteredProjects.length > 0 ? (
-                  filteredProjects.map((project, index) => (
+                {projects.length > 0 ? (
+                  projects.map((project, index) => (
                     <motion.div
                       key={project.id}
                       initial={{ opacity: 0, y: 30 }}

@@ -1,9 +1,8 @@
-("use client");
+"use client";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { ExternalLink, Github, Eye, Calendar, ArrowRight } from "lucide-react";
+import { ExternalLink, Github, Eye } from "lucide-react";
 import Link from "next/link";
-import { TechIcons } from "./TechIcons";
 
 interface Project {
   id: string;
@@ -99,7 +98,7 @@ export const ProjectMasonryCard = ({
               {/* Actions */}
               <div className="flex gap-2">
                 <Link
-                  href={`/projects/${project.slug}`}
+                  href={`/projects/${project.id}`}
                   className="p-2 bg-white/20 backdrop-blur-sm rounded-lg text-white hover:bg-white/30 transition-all duration-300"
                 >
                   <Eye size={16} />

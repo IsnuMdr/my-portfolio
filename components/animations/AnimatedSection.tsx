@@ -25,8 +25,8 @@ export const AnimatedSection = ({
 
   const getVariants = () => {
     const variants = {
-      hidden: { opacity: 0 },
-      visible: { opacity: 1 },
+      hidden: { opacity: 0, x: 0, y: 0, scale: 1 },
+      visible: { opacity: 1, x: 0, y: 0, scale: 1 },
     };
 
     switch (direction) {

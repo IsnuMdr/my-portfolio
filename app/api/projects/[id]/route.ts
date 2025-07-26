@@ -1,13 +1,15 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
     const project = await prisma.project.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!project) {
@@ -17,43 +19,47 @@ export async function GET(
     return NextResponse.json(project);
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to fetch project" },
+      { error: error instanceof Error ? error.message : "An error occurred" },
       { status: 500 }
     );
   }
 }
 
 export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
     const body = await request.json();
     const project = await prisma.project.update({
-      where: { id: params.id },
+      where: { id },
       data: body,
     });
     return NextResponse.json(project);
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to update project" },
+      { error: error instanceof Error ? error.message : "An error occurred" },
       { status: 500 }
     );
   }
 }
 
 export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
     await prisma.project.delete({
-      where: { id: params.id },
+      where: { id },
     });
     return NextResponse.json({ message: "Project deleted successfully" });
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to delete project" },
+      { error: error instanceof Error ? error.message : "An error occurred" },
       { status: 500 }
     );
   }

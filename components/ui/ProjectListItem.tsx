@@ -101,7 +101,7 @@ export const ProjectListItem = ({ project }: ProjectListItemProps) => {
         <div className="lg:col-span-3">
           <div className="flex lg:flex-col gap-3">
             <Link
-              href={`/projects/${project.slug}`}
+              href={`/projects/${project.id}`}
               className="flex items-center justify-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors duration-300 font-medium"
             >
               View Details
