@@ -9,21 +9,21 @@ export interface Project {
   title: string;
   description: string;
   longDescription: string;
-  imageUrl: string;
-  demoUrl?: string;
-  githubUrl?: string;
+  imageUrl: string | null;
+  demoUrl?: string | null;
+  githubUrl?: string | null;
   technologies: string[];
   featured: boolean;
-  completedAt: string;
+  completedAt: Date;
   slug: string;
-  challenge?: string;
-  solution?: string;
+  challenge?: string | null;
+  solution?: string | null;
   results: string[];
   images: ProjectImage[];
   features: string[];
   category: ProjectCategories;
   duration: string;
-  role?: string;
+  role?: string | null;
   teamSize: number;
   testimonial: ProjectTestimonial[];
 }

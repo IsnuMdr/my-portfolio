@@ -5,14 +5,12 @@ import { Search, Grid, List } from "lucide-react";
 import { AnimatedSection } from "../animations/AnimatedSection";
 import { ProjectCard } from "../ui/ProjectCard";
 import { ProjectListItem } from "../ui/ProjectListItem";
-import { useProjects } from "@/lib/hooks/useProjects";
+import { Project } from "@/types/project";
 
-export const ProjectsPageContent = () => {
+export const ProjectsPageContent = ({ projects }: { projects: Project[] }) => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchQuery, setSearchQuery] = useState("");
-
-  const { projects } = useProjects();
 
   // Categories with counts
   const categories = useMemo(() => {
@@ -35,25 +33,40 @@ export const ProjectsPageContent = () => {
     return [...allCategories, ...categoryOptions];
   }, [projects]);
 
+  const getProjectsByCategory = useCallback(
+    (category: string) => {
+      if (category === "all") {
+        return projects;
+      }
+
+      if (category === "featured") {
+        return projects.filter((p) => p.featured);
+      }
+
+      return projects.filter((p) => p.category === category);
+    },
+    [projects]
+  );
+
   // Filtered and searched projects
-  // const filteredProjects = useMemo(() => {
-  //   let filtered = getProjectsByCategory(selectedCategory);
+  const filteredProjects = useMemo(() => {
+    let filtered = getProjectsByCategory(selectedCategory);
 
-  //   if (searchQuery) {
-  //     filtered = filtered.filter(
-  //       (project) =>
-  //         project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-  //         project.description
-  //           .toLowerCase()
-  //           .includes(searchQuery.toLowerCase()) ||
-  //         project.technologies.some((tech) =>
-  //           tech.toLowerCase().includes(searchQuery.toLowerCase())
-  //         )
-  //     );
-  //   }
+    if (searchQuery) {
+      filtered = filtered.filter(
+        (project) =>
+          project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          project.description
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()) ||
+          project.technologies.some((tech) =>
+            tech.toLowerCase().includes(searchQuery.toLowerCase())
+          )
+      );
+    }
 
-  //   return filtered;
-  // }, [selectedCategory, searchQuery]);
+    return filtered;
+  }, [selectedCategory, searchQuery, getProjectsByCategory]);
 
   const handleCategoryChange = useCallback((categoryId: string) => {
     setSelectedCategory(categoryId);
@@ -164,7 +177,8 @@ export const ProjectsPageContent = () => {
           {/* Results Count */}
           <div className="mb-8">
             <p className="text-gray-600">
-              Showing <span className="font-semibold">{projects.length}</span>{" "}
+              Showing{" "}
+              <span className="font-semibold">{filteredProjects.length}</span>{" "}
               projects
               {searchQuery && ` for "${searchQuery}"`}
               {selectedCategory !== "all" &&
@@ -189,8 +203,8 @@ export const ProjectsPageContent = () => {
                     : "space-y-6"
                 }
               >
-                {projects.length > 0 ? (
-                  projects.map((project, index) => (
+                {filteredProjects.length > 0 ? (
+                  filteredProjects.map((project, index) => (
                     <motion.div
                       key={project.id}
                       initial={{ opacity: 0, y: 30 }}

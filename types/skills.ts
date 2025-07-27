@@ -3,6 +3,6 @@ export interface Skill {
   name: string;
   category: string;
   level: number;
-  experience: string;
-  description: string;
+  experience?: string | null;
+  description?: string | null;
 }

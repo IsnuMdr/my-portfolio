@@ -4,13 +4,11 @@ import { useState, useMemo, useCallback } from "react";
 import { ExternalLink, Github, Eye, Calendar } from "lucide-react";
 import { TechIcons } from "../ui/TechIcons";
 import { AnimatedSection } from "../animations/AnimatedSection";
-import { useProjects } from "@/lib/hooks/useProjects";
 import { Project } from "@/types/project";
 
-export const Projects = () => {
+export const Projects = ({ projects }: { projects: Project[] }) => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [hoveredProject, setHoveredProject] = useState<string | null>(null);
-  const { projects } = useProjects();
 
   // Categories with counts
   const categories = useMemo(() => {
@@ -39,13 +37,13 @@ export const Projects = () => {
     let filtered: Project[] = [];
 
     if (selectedCategory === "all") {
-      filtered = projects;
+      filtered = projects.slice(0, 6);
     } else if (selectedCategory === "featured") {
-      filtered = projects.filter((project) => project.featured);
+      filtered = projects.filter((project) => project.featured).slice(0, 6);
     } else {
-      filtered = projects.filter(
-        (project) => project.category === selectedCategory
-      );
+      filtered = projects
+        .filter((project) => project.category === selectedCategory)
+        .slice(0, 6);
     }
 
     return filtered;
@@ -160,7 +158,7 @@ export const Projects = () => {
                     {/* Project Image */}
                     <div className="relative overflow-hidden rounded-t-2xl aspect-project">
                       <motion.img
-                        src={project.imageUrl}
+                        src={"default-project.jpg"}
                         alt={project.title}
                         className="w-full h-full object-cover"
                         whileHover={{ scale: 1.1 }}
@@ -223,7 +221,7 @@ export const Projects = () => {
                         </h3>
                         <div className="flex items-center text-sm text-gray-500">
                           <Calendar size={14} className="mr-1" />
-                          {project.completedAt}
+                          {new Date(project.completedAt).getFullYear()}
                         </div>
                       </div>
 

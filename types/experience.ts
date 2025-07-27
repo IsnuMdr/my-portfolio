@@ -1,3 +1,5 @@
+import { ExperienceType } from "@prisma/client";
+
 export interface Experience {
   id: string;
   company: string;
@@ -5,11 +7,11 @@ export interface Experience {
   description: string;
   achievements: string[];
   startDate: string;
-  endDate?: string;
+  endDate?: string | null;
   current: boolean;
-  location?: string;
-  companyUrl?: string;
-  companyLogo?: string;
+  location?: string | null;
+  companyUrl?: string | null;
+  companyLogo?: string | null;
   technologies: string[];
-  type: "full-time" | "part-time" | "contract" | "internship";
+  type: ExperienceType;
 }

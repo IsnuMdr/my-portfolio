@@ -248,6 +248,8 @@ export const About = () => {
                 >
                   <Image
                     src="https://avatars.githubusercontent.com/u/20652209?v=4"
+                    width={400}
+                    height={400}
                     alt="Profile"
                     className="w-full aspect-[4/5] object-cover rounded-3xl shadow-large"
                   />

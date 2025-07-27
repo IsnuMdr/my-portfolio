@@ -9,21 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { TechIcons } from "./TechIcons";
-
-interface Project {
-  id: string;
-  slug: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  demoUrl?: string;
-  githubUrl?: string;
-  technologies: string[];
-  category: string;
-  featured: boolean;
-  completedAt: string;
-  duration?: string;
-}
+import { Project } from "@/types/project";
 
 interface ProjectListItemProps {
   project: Project;
@@ -37,7 +23,7 @@ export const ProjectListItem = ({ project }: ProjectListItemProps) => {
         <div className="lg:col-span-3">
           <div className="aspect-project rounded-xl overflow-hidden">
             <motion.img
-              src={project.imageUrl}
+              src={project.imageUrl || "default-project.jpg"}
               alt={project.title}
               className="w-full h-full object-cover"
               whileHover={{ scale: 1.05 }}
@@ -67,7 +53,9 @@ export const ProjectListItem = ({ project }: ProjectListItemProps) => {
           <div className="flex flex-wrap gap-6 text-sm text-gray-500 mb-4">
             <div className="flex items-center gap-1">
               <Calendar size={14} />
-              {project.completedAt}
+              {new Date(project.completedAt).toLocaleDateString("en-US", {
+                year: "numeric",
+              })}
             </div>
             {project.duration && (
               <div className="flex items-center gap-1">

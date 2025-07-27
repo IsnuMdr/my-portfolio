@@ -218,7 +218,9 @@ export const Header = () => {
                     onClick={() =>
                       item.href === "#projects" && pathname !== "/"
                         ? redirect("/projects")
-                        : handleNavClick(item.href)
+                        : pathname === "/"
+                        ? handleNavClick(item.href)
+                        : redirect("/" + item.href)
                     }
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}

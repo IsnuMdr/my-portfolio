@@ -12,14 +12,11 @@ import {
   Trophy,
   Wrench,
 } from "lucide-react";
-import { useSkills } from "@/lib/hooks/useSkills";
 import { Skill } from "@/types/skills";
 
-export const Skills = () => {
+export const Skills = ({ skills }: { skills: Skill[] }) => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
-
-  const { skills } = useSkills();
 
   // Categories with icons and counts
   const categories = useMemo(() => {
@@ -186,16 +183,20 @@ export const Skills = () => {
                         <h3 className="font-bold text-gray-900 group-hover:text-primary-600 transition-colors duration-300">
                           {skill.name}
                         </h3>
-                        <p className="text-sm text-gray-500">
-                          {skill.experience}
-                        </p>
+                        {skill.experience && (
+                          <p className="text-sm text-gray-500">
+                            {skill.experience}
+                          </p>
+                        )}
                       </div>
                     </div>
 
                     {/* Skill Description */}
-                    <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                      {skill.description}
-                    </p>
+                    {skill.description && (
+                      <p className="text-gray-600 text-sm mb-4 leading-relaxed">
+                        {skill.description}
+                      </p>
+                    )}
 
                     {/* Progress Bar */}
                     <div className="space-y-2">

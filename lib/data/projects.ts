@@ -1,26 +1,81 @@
 import { Project } from "@/types/project";
-
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+import { prisma } from "../prisma";
+import { ProjectCategories } from "@prisma/client";
 
 export async function getAllProjects(): Promise<Project[]> {
-  const res = await fetch(`${BASE_URL}/api/projects`);
-  return res.json();
+  try {
+    const projects = await prisma.project.findMany({
+      include: {
+        testimonial: true,
+        images: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return projects;
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    return [];
+  }
 }
 
 export async function getProjectById(id: string): Promise<Project | null> {
-  const res = await fetch(`${BASE_URL}/api/projects/${id}`);
-  if (!res.ok) return null;
-  return res.json();
+  try {
+    const project = await prisma.project.findUnique({
+      where: { id },
+      include: {
+        testimonial: true,
+        images: true,
+      },
+    });
+
+    return project;
+  } catch (error) {
+    console.error("Error fetching project:", error);
+    return null;
+  }
 }
 
 export async function getFeaturedProjects(): Promise<Project[]> {
-  const res = await fetch(`${BASE_URL}/api/projects?featured=true`);
-  return res.json();
+  try {
+    const projects = await prisma.project.findMany({
+      where: { featured: true },
+      include: {
+        testimonial: true,
+        images: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return projects;
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    return [];
+  }
 }
 
 export async function getProjectsByCategory(
-  category: string
+  category: ProjectCategories
 ): Promise<Project[]> {
-  const res = await fetch(`${BASE_URL}/api/projects?category=${category}`);
-  return res.json();
+  try {
+    const projects = await prisma.project.findMany({
+      where: { category },
+      include: {
+        testimonial: true,
+        images: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return projects;
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    return [];
+  }
 }

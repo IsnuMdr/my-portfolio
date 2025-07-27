@@ -23,7 +23,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
       {/* Project Image */}
       <div className="relative overflow-hidden aspect-project">
         <motion.img
-          src={project.imageUrl}
+          src={project.imageUrl || "default-project.jpg"}
           alt={project.title}
           className="w-full h-full object-cover"
           whileHover={{ scale: 1.1 }}
@@ -100,7 +100,10 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
           </h3>
           <div className="flex items-center text-sm text-gray-500">
             <Calendar size={14} className="mr-1" />
-            {project.completedAt}
+            {new Date(project.completedAt).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+            })}
           </div>
         </div>
 

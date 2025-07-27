@@ -13,15 +13,13 @@ import {
   ExternalLink,
   ChevronRight,
 } from "lucide-react";
-import { useExperience } from "@/lib/hooks/useExperience";
 import Image from "next/image";
+import { Experience } from "@/types/experience";
 
-export const Experience = () => {
+export const Experiences = ({ experiences }: { experiences: Experience[] }) => {
   const [hoveredExperience, setHoveredExperience] = useState<string | null>(
     null
   );
-
-  const { experiences } = useExperience();
 
   const getTypeColor = (type: string) => {
     const colors = {
@@ -142,6 +140,8 @@ export const Experience = () => {
                           >
                             <Image
                               src={experience.companyLogo}
+                              width={64}
+                              height={64}
                               alt={`${experience.company} logo`}
                               className="w-full h-full object-cover"
                             />
