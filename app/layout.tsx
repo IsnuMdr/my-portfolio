@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { PerformanceProvider } from "@/components/providers/PerformanceProvider";
+import { WebVitals } from "./web-vitals";
 
 // Proper font configuration
 const inter = Inter({
@@ -42,27 +44,27 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "en_US",
+    locale: "id_ID",
     url: "https://isnumdr.vercel.app",
     title: "Isnu Munandar - Software Engineer Portfolio",
     description:
       "Passionate Software Engineer specializing in modern web development",
     siteName: "Isnu Munandar Portfolio",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Isnu Munandar - Software Engineer Portfolio",
-      },
-    ],
+    // images: [
+    //   {
+    //     url: "/og-image.jpg",
+    //     width: 1200,
+    //     height: 630,
+    //     alt: "Isnu Munandar - Software Engineer Portfolio",
+    //   },
+    // ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Isnu Munandar - Software Engineer Portfolio",
     description:
       "Passionate Software Engineer specializing in modern web development",
-    images: ["/og-image.jpg"],
+    // images: ["/og-image.jpg"],
     creator: "@IsnuMdr",
   },
   robots: {
@@ -78,12 +80,11 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
-  },
-  manifest: "/site.webmanifest",
+  // icons: {
+  //   icon: "/favicon.ico",
+  //   shortcut: "/favicon-16x16.png",
+  //   apple: "/apple-touch-icon.png",
+  // },
 };
 
 export default function RootLayout({
@@ -94,6 +95,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={inter.variable}>
       <head>
+        {/* Critical resource hints */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+
         {/* Analytics */}
         {process.env.NODE_ENV === "production" &&
           process.env.NEXT_PUBLIC_GA_ID && (
@@ -154,22 +163,8 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.className} antialiased`}>
-        {children}
-
-        {/* Service Worker Registration */}
-        {process.env.NODE_ENV === "production" && (
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                if ('serviceWorker' in navigator) {
-                  window.addEventListener('load', function() {
-                    navigator.serviceWorker.register('/sw.js');
-                  });
-                }
-              `,
-            }}
-          />
-        )}
+        <WebVitals />
+        <PerformanceProvider>{children}</PerformanceProvider>
       </body>
     </html>
   );

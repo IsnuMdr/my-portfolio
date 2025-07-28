@@ -43,8 +43,8 @@ export const preloadCriticalResources = () => {
   // Preload critical images with high priority
   const criticalImages = [
     "/images/profile.jpg",
-    "/images/hero-bg.jpg",
-    "/api/placeholder/600/400", // Project images
+    "/images/default-company-logo.png",
+    "/images/default-project.jpg", // Project images
   ];
 
   criticalImages.forEach((src) => preloadImage(src, true));
@@ -55,9 +55,9 @@ export const preloadCriticalResources = () => {
   criticalRoutes.forEach((route) => preloadRoute(route));
 
   // Preload web fonts if using custom fonts
-  const fonts = ["/fonts/inter-var.woff2"];
+  // const fonts = ["/fonts/inter-var.woff2"];
 
-  fonts.forEach((font) => preloadFont(font));
+  // fonts.forEach((font) => preloadFont(font));
 };
 
 // Intersection Observer for lazy loading

@@ -65,6 +65,7 @@ module.exports = {
         "pulse-glow": "pulseGlow 2s ease-in-out infinite alternate",
         "bounce-gentle": "bounceGentle 2s ease-in-out infinite",
         wiggle: "wiggle 1s ease-in-out infinite",
+        shimmer: "shimmer 2s infinite",
       },
       keyframes: {
         float: {
@@ -108,6 +109,10 @@ module.exports = {
         wiggle: {
           "0%, 100%": { transform: "rotate(-3deg)" },
           "50%": { transform: "rotate(3deg)" },
+        },
+        shimmer: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
         },
       },
       backgroundImage: {

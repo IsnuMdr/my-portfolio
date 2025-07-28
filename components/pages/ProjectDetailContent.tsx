@@ -19,7 +19,7 @@ import Link from "next/link";
 import { AnimatedSection } from "../animations/AnimatedSection";
 import { TechIcons } from "../ui/TechIcons";
 import { Project } from "@/types/project";
-import Image from "next/image";
+import { OptimizedImage } from "../ui/OptimizedImage";
 
 interface ProjectDetailContentProps {
   project: Project;
@@ -315,7 +315,7 @@ export const ProjectDetailContent = ({
                             : "opacity-70 hover:opacity-100"
                         }`}
                       >
-                        <Image
+                        <OptimizedImage
                           src={
                             project.imageUrl || "/images/default-project.jpg"
                           }
@@ -323,6 +323,7 @@ export const ProjectDetailContent = ({
                           height={100}
                           alt={`${project.title} thumbnail ${index + 1}`}
                           className="w-full h-full object-cover"
+                          lazy={true}
                         />
                       </motion.button>
                     ))}
@@ -578,10 +579,13 @@ export const ProjectDetailContent = ({
             exit={{ scale: 0.5 }}
             className="relative max-w-7xl max-h-full"
           >
-            <Image
+            <OptimizedImage
               src={project.images[currentImageIndex].imageUrl}
+              width={600}
+              height={400}
               alt={`${project.title} - Full size`}
               className="max-w-full max-h-full object-contain rounded-lg"
+              lazy={true}
             />
             <button
               onClick={() => setShowFullImage(false)}

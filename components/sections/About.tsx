@@ -12,7 +12,7 @@ import {
   MapPin,
   Mail,
 } from "lucide-react";
-import Image from "next/image";
+import { OptimizedImage } from "../ui/OptimizedImage";
 
 export const About = () => {
   const [activeTab, setActiveTab] = useState("story");
@@ -246,12 +246,14 @@ export const About = () => {
                   transition={{ duration: 0.3 }}
                   className="relative"
                 >
-                  <Image
+                  <OptimizedImage
                     src="/images/profile.jpg"
                     width={400}
                     height={400}
                     alt="Profile"
                     className="w-full aspect-[4/5] object-cover rounded-3xl shadow-large"
+                    lazy={true}
+                    priority
                   />
                   <div className="absolute -top-4 -left-4 w-full h-full bg-gradient-to-br from-primary-200 to-accent-200 rounded-3xl -z-10" />
                 </motion.div>

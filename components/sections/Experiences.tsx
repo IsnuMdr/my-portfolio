@@ -13,8 +13,8 @@ import {
   ExternalLink,
   ChevronRight,
 } from "lucide-react";
-import Image from "next/image";
 import { Experience } from "@/types/experience";
+import { OptimizedImage } from "../ui/OptimizedImage";
 
 export const Experiences = ({ experiences }: { experiences: Experience[] }) => {
   const [hoveredExperience, setHoveredExperience] = useState<string | null>(
@@ -138,7 +138,7 @@ export const Experiences = ({ experiences }: { experiences: Experience[] }) => {
                             whileHover={{ scale: 1.1, rotate: 5 }}
                             className="w-16 h-16 rounded-xl overflow-hidden shadow-soft flex-shrink-0"
                           >
-                            <Image
+                            <OptimizedImage
                               src={experience.companyLogo}
                               width={64}
                               height={64}
