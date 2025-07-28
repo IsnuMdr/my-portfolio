@@ -23,7 +23,7 @@ export const ProjectListItem = ({ project }: ProjectListItemProps) => {
         <div className="lg:col-span-3">
           <div className="aspect-project rounded-xl overflow-hidden">
             <motion.img
-              src={project.imageUrl || "default-project.jpg"}
+              src={project.imageUrl || "images/default-project.jpg"}
               alt={project.title}
               className="w-full h-full object-cover"
               whileHover={{ scale: 1.05 }}

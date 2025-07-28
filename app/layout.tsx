@@ -63,7 +63,7 @@ export const metadata: Metadata = {
     description:
       "Passionate Software Engineer specializing in modern web development",
     images: ["/og-image.jpg"],
-    creator: "@yourusername",
+    creator: "@IsnuMdr",
   },
   robots: {
     index: true,
@@ -135,8 +135,8 @@ export default function RootLayout({
               ],
               address: {
                 "@type": "PostalAddress",
-                addressLocality: "South Tangerang",
-                addressRegion: "Banten",
+                addressLocality: "South Jakarta",
+                addressRegion: "Jakarta",
                 addressCountry: "Indonesia",
               },
               knowsAbout: [

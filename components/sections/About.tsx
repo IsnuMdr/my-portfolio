@@ -216,7 +216,7 @@ export const About = () => {
                 Currently Based In
               </h4>
               <p className="text-gray-700 mb-4">
-                <strong>South Tangerang, Banten, Indonesia</strong> 🇮🇩
+                <strong>South Jakarta, DKI Jakarta, Indonesia</strong> 🇮🇩
               </p>
               <p className="text-gray-600 leading-relaxed">
                 Available for remote work and open to relocation for the right
@@ -247,7 +247,7 @@ export const About = () => {
                   className="relative"
                 >
                   <Image
-                    src="https://avatars.githubusercontent.com/u/20652209?v=4"
+                    src="/images/profile.jpg"
                     width={400}
                     height={400}
                     alt="Profile"

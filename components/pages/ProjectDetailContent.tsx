@@ -89,30 +89,31 @@ export const ProjectDetailContent = ({
               <div>
                 {/* Header */}
                 <div className="flex items-start justify-between mb-6">
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center">
                     <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
                       {project.title}
                     </h1>
+                  </div>
+                  <div className="flex items-center gap-4">
                     {project.featured && (
                       <motion.span
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
                         transition={{ delay: 0.3, type: "spring" }}
-                        className="px-3 py-1 bg-accent-500 text-white text-sm font-medium rounded-full shadow-soft"
+                        className="flex items-center px-3 py-1 bg-accent-500 text-white text-sm font-medium rounded-full shadow-soft"
                       >
                         <Star size={16} className="inline mr-1" />
                         Featured
                       </motion.span>
                     )}
+                    <button
+                      onClick={handleShare}
+                      className="p-3 bg-white/80 backdrop-blur-sm rounded-xl border border-white/50 shadow-soft hover:shadow-medium transition-all duration-300"
+                      title="Share Project"
+                    >
+                      <Share2 size={20} className="text-gray-600" />
+                    </button>
                   </div>
-
-                  <button
-                    onClick={handleShare}
-                    className="p-3 bg-white/80 backdrop-blur-sm rounded-xl border border-white/50 shadow-soft hover:shadow-medium transition-all duration-300"
-                    title="Share Project"
-                  >
-                    <Share2 size={20} className="text-gray-600" />
-                  </button>
                 </div>
 
                 <p className="text-xl text-gray-600 mb-8 leading-relaxed">
@@ -132,7 +133,9 @@ export const ProjectDetailContent = ({
                     </div>
                     <div>
                       <div className="font-medium text-gray-900">Completed</div>
-                      <div className="text-gray-600">{project.completedAt}</div>
+                      <div className="text-gray-600">
+                        {new Date(project.completedAt).toLocaleDateString()}
+                      </div>
                     </div>
                   </motion.div>
 
@@ -203,13 +206,13 @@ export const ProjectDetailContent = ({
                       rel="noopener noreferrer"
                       whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.95 }}
-                      className="btn-primary-elegant group"
+                      className="btn-primary-elegant group flex items-center"
                     >
                       <ExternalLink
                         size={20}
                         className="mr-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"
                       />
-                      View Live Demo
+                      Live Demo
                     </motion.a>
                   )}
 
@@ -220,13 +223,13 @@ export const ProjectDetailContent = ({
                       rel="noopener noreferrer"
                       whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.95 }}
-                      className="btn-secondary-elegant group"
+                      className="btn-secondary-elegant group flex items-center"
                     >
                       <Github
                         size={20}
                         className="mr-2 group-hover:rotate-12 transition-transform"
                       />
-                      View Source Code
+                      Source Code
                     </motion.a>
                   )}
                 </motion.div>
@@ -240,7 +243,7 @@ export const ProjectDetailContent = ({
                 <div className="relative aspect-project rounded-2xl overflow-hidden shadow-large mb-4">
                   <motion.img
                     key={currentImageIndex}
-                    src={project.imageUrl}
+                    src={project.imageUrl || "/images/default-project.jpg"}
                     alt={`${project.title} - Image ${currentImageIndex + 1}`}
                     className="w-full h-full object-cover cursor-zoom-in"
                     initial={{ opacity: 0, scale: 1.1 }}
@@ -313,7 +316,11 @@ export const ProjectDetailContent = ({
                         }`}
                       >
                         <Image
-                          src={project.imageUrl}
+                          src={
+                            project.imageUrl || "/images/default-project.jpg"
+                          }
+                          width={100}
+                          height={100}
                           alt={`${project.title} thumbnail ${index + 1}`}
                           className="w-full h-full object-cover"
                         />

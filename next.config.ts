@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
     scrollRestoration: true,
   },
   images: {
-    domains: ["localhost", "yourportfolio.com"],
+    domains: ["localhost", "isnumdr.vercel.app"],
     remotePatterns: [
       {
         protocol: "https",

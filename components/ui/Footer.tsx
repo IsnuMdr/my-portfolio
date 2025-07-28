@@ -23,21 +23,21 @@ export const Footer = () => {
       href: "https://github.com/IsnuMdr",
       label: "GitHub",
       color: "hover:text-gray-900 hover:bg-gray-100",
-      username: "@yourusername",
+      username: "@IsnuMdr",
     },
     {
       icon: Linkedin,
       href: "https://www.linkedin.com/in/muhammad-isnu-munandar-b256961b3/",
       label: "LinkedIn",
       color: "hover:text-blue-600 hover:bg-blue-50",
-      username: "/in/yourusername",
+      username: "/in/muhammad-isnu-munandar-b256961b3",
     },
     {
       icon: Mail,
-      href: "mailto:your.email@example.com",
+      href: "mailto:isnu.mdr@gmail.com",
       label: "Email",
       color: "hover:text-red-500 hover:bg-red-50",
-      username: "your.email@example.com",
+      username: "isnu.mdr@gmail.com",
     },
   ];
 
@@ -154,15 +154,15 @@ export const Footer = () => {
                 <div className="space-y-3 mb-6">
                   <div className="flex items-center gap-3 text-gray-300">
                     <MapPin size={16} className="text-primary-400" />
-                    <span className="text-sm">South Tangerang, Indonesia</span>
+                    <span className="text-sm">South Jakarta, Indonesia</span>
                   </div>
                   <div className="flex items-center gap-3 text-gray-300">
                     <Phone size={16} className="text-primary-400" />
-                    <span className="text-sm">+62 812-3456-7890</span>
+                    <span className="text-sm">+62 823-2613-9613</span>
                   </div>
                   <div className="flex items-center gap-3 text-gray-300">
                     <Mail size={16} className="text-primary-400" />
-                    <span className="text-sm">your.email@example.com</span>
+                    <span className="text-sm">isnu.mdr@gmail.com</span>
                   </div>
                 </div>
 

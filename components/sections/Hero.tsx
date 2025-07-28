@@ -26,7 +26,7 @@ export const Hero = () => {
     },
     {
       icon: Mail,
-      href: "mailto:your.email@example.com",
+      href: "mailto:isnu.mdr@gmail.com",
       label: "Email",
       color: "hover:text-red-500 hover:bg-red-50",
     },

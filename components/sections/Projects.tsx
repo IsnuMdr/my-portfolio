@@ -1,14 +1,12 @@
 "use client";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { useState, useMemo, useCallback } from "react";
-import { ExternalLink, Github, Eye, Calendar } from "lucide-react";
-import { TechIcons } from "../ui/TechIcons";
 import { AnimatedSection } from "../animations/AnimatedSection";
 import { Project } from "@/types/project";
+import { ProjectCard } from "../ui/ProjectCard";
 
 export const Projects = ({ projects }: { projects: Project[] }) => {
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [hoveredProject, setHoveredProject] = useState<string | null>(null);
 
   // Categories with counts
   const categories = useMemo(() => {
@@ -52,7 +50,6 @@ export const Projects = ({ projects }: { projects: Project[] }) => {
   // Handle category change
   const handleCategoryChange = useCallback((categoryId: string) => {
     setSelectedCategory(categoryId);
-    setHoveredProject(null); // Reset hover state
   }, []);
 
   const containerVariants = {
@@ -151,130 +148,9 @@ export const Projects = ({ projects }: { projects: Project[] }) => {
                     key={`${selectedCategory}-${project.id}`}
                     variants={itemVariants}
                     layout
-                    onMouseEnter={() => setHoveredProject(project.id)}
-                    onMouseLeave={() => setHoveredProject(null)}
                     className="card-elegant group cursor-pointer overflow-hidden"
                   >
-                    {/* Project Image */}
-                    <div className="relative overflow-hidden rounded-t-2xl aspect-project">
-                      <motion.img
-                        src={"default-project.jpg"}
-                        alt={project.title}
-                        className="w-full h-full object-cover"
-                        whileHover={{ scale: 1.1 }}
-                        transition={{ duration: 0.6 }}
-                      />
-
-                      {/* Overlay */}
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{
-                          opacity: hoveredProject === project.id ? 1 : 0,
-                        }}
-                        className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex items-center justify-center"
-                      >
-                        <div className="flex gap-4">
-                          {project.demoUrl && (
-                            <motion.a
-                              href={project.demoUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              whileHover={{ scale: 1.1, y: -2 }}
-                              whileTap={{ scale: 0.9 }}
-                              className="p-3 bg-white/90 backdrop-blur-sm rounded-full text-gray-800 shadow-soft hover:shadow-medium transition-all duration-300"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <Eye size={20} />
-                            </motion.a>
-                          )}
-                          {project.githubUrl && (
-                            <motion.a
-                              href={project.githubUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              whileHover={{ scale: 1.1, y: -2 }}
-                              whileTap={{ scale: 0.9 }}
-                              className="p-3 bg-white/90 backdrop-blur-sm rounded-full text-gray-800 shadow-soft hover:shadow-medium transition-all duration-300"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <Github size={20} />
-                            </motion.a>
-                          )}
-                        </div>
-                      </motion.div>
-
-                      {/* Featured Badge */}
-                      {project.featured && (
-                        <div className="absolute top-4 left-4">
-                          <span className="px-3 py-1 bg-accent-500 text-white text-xs font-medium rounded-full shadow-soft">
-                            Featured
-                          </span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Project Content */}
-                    <div className="p-6">
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-xl font-bold text-gray-900 group-hover:text-primary-600 transition-colors duration-300">
-                          {project.title}
-                        </h3>
-                        <div className="flex items-center text-sm text-gray-500">
-                          <Calendar size={14} className="mr-1" />
-                          {new Date(project.completedAt).getFullYear()}
-                        </div>
-                      </div>
-
-                      <p className="text-gray-600 mb-4 leading-relaxed">
-                        {project.description}
-                      </p>
-
-                      {/* Technologies */}
-                      <div className="flex flex-wrap gap-3 mb-4">
-                        {project.technologies.slice(0, 4).map((tech) => (
-                          <div
-                            key={tech}
-                            className="flex items-center gap-2 px-3 py-1 bg-gray-100 rounded-full text-sm"
-                          >
-                            <TechIcons name={tech} size={16} />
-                            <span className="text-gray-700 font-medium">
-                              {tech}
-                            </span>
-                          </div>
-                        ))}
-                        {project.technologies.length > 4 && (
-                          <span className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">
-                            +{project.technologies.length - 4} more
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Action Links */}
-                      <div className="flex gap-3 pt-4 border-t border-gray-100">
-                        {project.demoUrl && (
-                          <a
-                            href={project.demoUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium transition-colors duration-300"
-                          >
-                            <ExternalLink size={16} />
-                            Live Demo
-                          </a>
-                        )}
-                        {project.githubUrl && (
-                          <a
-                            href={project.githubUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2 text-gray-600 hover:text-gray-800 font-medium transition-colors duration-300"
-                          >
-                            <Github size={16} />
-                            Source Code
-                          </a>
-                        )}
-                      </div>
-                    </div>
+                    <ProjectCard project={project} />
                   </motion.div>
                 ))
               ) : (

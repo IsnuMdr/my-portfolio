@@ -55,8 +55,8 @@ export const Contact = () => {
     {
       icon: Mail,
       label: "Email",
-      value: "your.email@example.com",
-      href: "mailto:your.email@example.com",
+      value: "isnu.mdr@gmail.com",
+      href: "mailto:isnu.mdr@gmail.com",
       description: "Send me an email anytime",
       color: "text-blue-600",
       bgColor: "bg-blue-50",
@@ -73,7 +73,7 @@ export const Contact = () => {
     {
       icon: MapPin,
       label: "Location",
-      value: "South Tangerang, ID",
+      value: "South Jakarta, ID",
       href: "https://maps.google.com",
       description: "Open to remote work",
       color: "text-purple-600",
@@ -257,7 +257,7 @@ export const Contact = () => {
                           setFormData({ ...formData, email: e.target.value })
                         }
                         className="input-elegant"
-                        placeholder="gK3tM@example.com"
+                        placeholder="johndoe@example.com"
                       />
                     </motion.div>
                   </div>
