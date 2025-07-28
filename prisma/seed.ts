@@ -26,7 +26,7 @@ async function main() {
         ],
         imageUrl: "/api/placeholder/1200/800",
         demoUrl: "https://ecommerce-demo.example.com",
-        githubUrl: "https://github.com/yourusername/ecommerce-platform",
+        githubUrl: "https://github.com/IsnuMdr/ecommerce-platform",
         technologies: [
           "Next.js",
           "TypeScript",
@@ -75,7 +75,7 @@ async function main() {
         ],
         imageUrl: "/api/placeholder/1200/800",
         demoUrl: "https://ai-chat-demo.example.com",
-        githubUrl: "https://github.com/yourusername/ai-chat-interface",
+        githubUrl: "https://github.com/IsnuMdr/ai-chat-interface",
         technologies: [
           "React",
           "Node.js",
@@ -123,7 +123,7 @@ async function main() {
         ],
         imageUrl: "/api/placeholder/1200/800",
         demoUrl: "https://taskmanager-demo.example.com",
-        githubUrl: "https://github.com/yourusername/task-management",
+        githubUrl: "https://github.com/IsnuMdr/task-management",
         technologies: [
           "Vue.js",
           "Express.js",
@@ -171,7 +171,7 @@ async function main() {
         ],
         imageUrl: "/api/placeholder/1200/800",
         demoUrl: "https://weather-dashboard-demo.example.com",
-        githubUrl: "https://github.com/yourusername/weather-dashboard",
+        githubUrl: "https://github.com/IsnuMdr/weather-dashboard",
         technologies: [
           "React",
           "D3.js",
@@ -218,7 +218,7 @@ async function main() {
         ],
         imageUrl: "/api/placeholder/1200/800",
         demoUrl: "https://api-demo.example.com",
-        githubUrl: "https://github.com/yourusername/rest-api-server",
+        githubUrl: "https://github.com/IsnuMdr/rest-api-server",
         technologies: [
           "Node.js",
           "Express.js",
@@ -267,7 +267,7 @@ async function main() {
         ],
         imageUrl: "/api/placeholder/1200/800",
         demoUrl: "https://banking-app-demo.example.com",
-        githubUrl: "https://github.com/yourusername/mobile-banking-app",
+        githubUrl: "https://github.com/IsnuMdr/mobile-banking-app",
         technologies: [
           "React Native",
           "Firebase",

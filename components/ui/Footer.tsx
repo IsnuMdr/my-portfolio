@@ -20,14 +20,14 @@ export const Footer = () => {
   const socialLinks = [
     {
       icon: Github,
-      href: "https://github.com/yourusername",
+      href: "https://github.com/IsnuMdr",
       label: "GitHub",
       color: "hover:text-gray-900 hover:bg-gray-100",
       username: "@yourusername",
     },
     {
       icon: Linkedin,
-      href: "https://linkedin.com/in/yourusername",
+      href: "https://www.linkedin.com/in/muhammad-isnu-munandar-b256961b3/",
       label: "LinkedIn",
       color: "hover:text-blue-600 hover:bg-blue-50",
       username: "/in/yourusername",

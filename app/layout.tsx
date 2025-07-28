@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     "portfolio",
     "indonesia developer",
   ],
-  authors: [{ name: "Isnu Munandar", url: "https://yourportfolio.com" }],
+  authors: [{ name: "Isnu Munandar", url: "https://isnumdr.vercel.app" }],
   creator: "Isnu Munandar",
   publisher: "Isnu Munandar",
   formatDetection: {
@@ -36,14 +36,14 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://yourportfolio.com"),
+  metadataBase: new URL("https://isnumdr.vercel.app"),
   alternates: {
     canonical: "/",
   },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://yourportfolio.com",
+    url: "https://isnumdr.vercel.app",
     title: "Isnu Munandar - Software Engineer Portfolio",
     description:
       "Passionate Software Engineer specializing in modern web development",
@@ -128,11 +128,10 @@ export default function RootLayout({
               jobTitle: "Software Engineer",
               description:
                 "Passionate Software Engineer specializing in modern web development",
-              url: "https://yourportfolio.com",
+              url: "https://isnumdr.vercel.app",
               sameAs: [
-                "https://github.com/yourusername",
-                "https://linkedin.com/in/yourusername",
-                "https://twitter.com/yourusername",
+                "https://github.com/IsnuMdr",
+                "https://www.linkedin.com/in/muhammad-isnu-munandar-b256961b3/",
               ],
               address: {
                 "@type": "PostalAddress",

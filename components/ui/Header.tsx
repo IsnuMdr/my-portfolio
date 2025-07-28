@@ -37,7 +37,7 @@ export const Header = () => {
     { icon: Github, href: "https://github.com/IsnuMdr", label: "GitHub" },
     {
       icon: Linkedin,
-      href: "https://linkedin.com/in/yourusername",
+      href: "https://www.linkedin.com/in/muhammad-isnu-munandar-b256961b3/",
       label: "LinkedIn",
     },
     { icon: Mail, href: "mailto:isnu.mdr@gmail.com", label: "Email" },
