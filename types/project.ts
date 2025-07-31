@@ -19,11 +19,13 @@ export interface Project {
   challenge?: string | null;
   solution?: string | null;
   results: string[];
-  images: ProjectImage[];
+  images?: ProjectImage[];
   features: string[];
   category: ProjectCategories;
   duration: string;
   role?: string | null;
   teamSize: number;
-  testimonial: ProjectTestimonial[];
+  testimonial?: ProjectTestimonial[];
 }
+
+export type ProjectData = Omit<Project, "id">;
