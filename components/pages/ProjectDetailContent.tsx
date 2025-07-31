@@ -23,23 +23,25 @@ import { OptimizedImage } from "../ui/OptimizedImage";
 
 interface ProjectDetailContentProps {
   project: Project;
+  completedAtFormatted: string;
 }
 
 export const ProjectDetailContent = ({
   project,
+  completedAtFormatted,
 }: ProjectDetailContentProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showFullImage, setShowFullImage] = useState(false);
 
   const nextImage = () => {
     setCurrentImageIndex((prev) =>
-      prev === project.images?.length - 1 ? 0 : prev + 1
+      prev === project.images.length - 1 ? 0 : prev + 1
     );
   };
 
   const prevImage = () => {
     setCurrentImageIndex((prev) =>
-      prev === 0 ? project.images?.length - 1 : prev - 1
+      prev === 0 ? project.images.length - 1 : prev - 1
     );
   };
 
@@ -134,7 +136,7 @@ export const ProjectDetailContent = ({
                     <div>
                       <div className="font-medium text-gray-900">Completed</div>
                       <div className="text-gray-600">
-                        {new Date(project.completedAt).toLocaleDateString()}
+                        {completedAtFormatted}
                       </div>
                     </div>
                   </motion.div>
@@ -243,7 +245,7 @@ export const ProjectDetailContent = ({
                 <div className="relative aspect-project rounded-2xl overflow-hidden shadow-large mb-4">
                   <motion.img
                     key={currentImageIndex}
-                    src={project.imageUrl || "/images/default-project.jpg"}
+                    src={project.images[currentImageIndex].imageUrl}
                     alt={`${project.title} - Image ${currentImageIndex + 1}`}
                     className="w-full h-full object-cover cursor-zoom-in"
                     initial={{ opacity: 0, scale: 1.1 }}
@@ -303,7 +305,7 @@ export const ProjectDetailContent = ({
                 {/* Thumbnail Navigation */}
                 {project.images && project.images.length > 1 && (
                   <div className="grid grid-cols-4 gap-2">
-                    {project.images.slice(0, 4).map((image, index) => (
+                    {project.images.map((image, index) => (
                       <motion.button
                         key={index}
                         onClick={() => setCurrentImageIndex(index)}
@@ -316,11 +318,9 @@ export const ProjectDetailContent = ({
                         }`}
                       >
                         <OptimizedImage
-                          src={
-                            project.imageUrl || "/images/default-project.jpg"
-                          }
-                          width={100}
-                          height={100}
+                          src={image.imageUrl}
+                          width={50}
+                          height={50}
                           alt={`${project.title} thumbnail ${index + 1}`}
                           className="w-full h-full object-cover"
                           lazy={true}
@@ -579,14 +579,17 @@ export const ProjectDetailContent = ({
             exit={{ scale: 0.5 }}
             className="relative max-w-7xl max-h-full"
           >
-            <OptimizedImage
-              src={project.images[currentImageIndex].imageUrl}
-              width={600}
-              height={400}
-              alt={`${project.title} - Full size`}
-              className="max-w-full max-h-full object-contain rounded-lg"
-              lazy={true}
-            />
+            {project.images && (
+              <OptimizedImage
+                src={project.images[currentImageIndex].imageUrl}
+                width={600}
+                height={400}
+                alt={`${project.title} - Full size`}
+                className="max-w-full max-h-full object-contain rounded-lg"
+                lazy={true}
+              />
+            )}
+
             <button
               onClick={() => setShowFullImage(false)}
               className="absolute top-4 right-4 p-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-all duration-300"

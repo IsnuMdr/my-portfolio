@@ -18,10 +18,22 @@ export default async function ProjectDetailPage({
     notFound();
   }
 
+  const completedAtFormatted = new Date(project.completedAt).toLocaleDateString(
+    "id-ID",
+    {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    }
+  );
+
   return (
     <main className="min-h-screen bg-gradient-elegant">
       <Header />
-      <ProjectDetailContent project={project} />
+      <ProjectDetailContent
+        project={project}
+        completedAtFormatted={completedAtFormatted}
+      />
       <Footer />
       <ScrollToTop />
     </main>

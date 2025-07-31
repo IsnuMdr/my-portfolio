@@ -4,6 +4,9 @@ import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import { Project, ProjectData } from "@/types/project";
 import { ProjectCategories } from "@prisma/client";
+import ImageUpload from "../ui/ImageUpload";
+import { useMultiImageUpload } from "@/lib/hooks/useMultiImageUpload";
+import MultiImageUpload from "../ui/MultiImageUpload";
 
 interface ProjectFormProps {
   project: Project | null;
@@ -33,6 +36,7 @@ export const ProjectForm = ({
     duration: "",
     teamSize: 0,
   });
+  const [imageUrl, setImageUrl] = useState<string>("");
 
   useEffect(() => {
     if (project) {
@@ -56,16 +60,46 @@ export const ProjectForm = ({
     }
   }, [project]);
 
+  const {
+    images: detailImages,
+    addImageSlot,
+    handleUploadBegin,
+    handleUploadComplete,
+    handleUploadError,
+    removeImage,
+    getImageUrls,
+    canAddMore,
+  } = useMultiImageUpload({
+    maxImages: 8,
+    onUploadComplete: (images) => {
+      setFormData((prev) => ({
+        ...prev,
+        images: images.map((img) => {
+          return {
+            imageUrl: img.url,
+          };
+        }),
+      }));
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave({
-      ...formData,
-      category: formData.category as ProjectCategories,
-      completedAt: new Date(formData.completedAt),
-      technologies: formData.technologies.split(",").map((tech) => tech.trim()),
-      results: formData.results.split(",").map((result) => result.trim()),
-      features: formData.features.split(",").map((feature) => feature.trim()),
-    });
+    try {
+      onSave({
+        ...formData,
+        imageUrl: imageUrl,
+        category: formData.category as ProjectCategories,
+        completedAt: new Date(formData.completedAt),
+        technologies: formData.technologies
+          .split(",")
+          .map((tech) => tech.trim()),
+        results: formData.results.split(",").map((result) => result.trim()),
+        features: formData.features.split(",").map((feature) => feature.trim()),
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -196,13 +230,9 @@ export const ProjectForm = ({
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               Image URL
             </label>
-            <input
-              type="url"
-              value={formData.imageUrl}
-              onChange={(e) =>
-                setFormData({ ...formData, imageUrl: e.target.value })
-              }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            <ImageUpload
+              value={imageUrl || formData.imageUrl}
+              onChange={(url) => setImageUrl(url || "")}
             />
           </div>
 
@@ -305,6 +335,31 @@ export const ProjectForm = ({
                 setFormData({ ...formData, teamSize: Number(e.target.value) })
               }
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Additional Product Images
+              <span className="text-gray-500 font-normal">
+                (Optional - up to 8 images)
+              </span>
+            </label>
+            <p className="text-sm text-gray-600 mb-4">
+              Add more images to showcase different angles, details, or
+              variations of your product.
+            </p>
+
+            <MultiImageUpload
+              images={detailImages}
+              onUploadBegin={handleUploadBegin}
+              onUploadComplete={handleUploadComplete}
+              onUploadError={handleUploadError}
+              onRemoveImage={removeImage}
+              onAddImage={addImageSlot}
+              canAddMore={canAddMore}
+              // disabled={isSubmitting}
+              maxImages={8}
             />
           </div>
 

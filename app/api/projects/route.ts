@@ -34,9 +34,15 @@ export async function GET(request: NextRequest) {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    console.log(body);
+
     const project = await prisma.project.create({
-      data: body,
+      data:
+        body.images.length > 0
+          ? { ...body, images: { createMany: { data: body.images } } }
+          : body,
     });
+
     return NextResponse.json(project, { status: 201 });
   } catch (error) {
     return NextResponse.json(
@@ -51,7 +57,10 @@ export async function PUT(request: Request) {
     const body = await request.json();
     const project = await prisma.project.update({
       where: { id: body.id },
-      data: body,
+      data:
+        body.images.length > 0
+          ? { ...body, images: { createMany: { data: body.images } } }
+          : body,
     });
     return NextResponse.json(project, { status: 200 });
   } catch (error) {

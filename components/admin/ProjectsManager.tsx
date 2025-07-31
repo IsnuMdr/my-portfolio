@@ -28,8 +28,8 @@ export default function ProjectsManager() {
     refetch: () => void;
   } = useProjects();
 
-  const { createProject } = useCreateProject();
-  const { updateProject } = useUpdateProject();
+  const { createProject, error: createError } = useCreateProject();
+  const { updateProject, error: updateError } = useUpdateProject();
   const { deleteProject } = useDeleteProject();
 
   const handleDelete = async (id: string) => {
@@ -52,9 +52,12 @@ export default function ProjectsManager() {
         // Create new project
         await createProject(projectData);
       }
-      setShowForm(false);
-      setEditingProject(null);
-      refetch();
+      if (createError || updateError) {
+        console.error("Error saving project:", createError || updateError);
+      } else {
+        setShowForm(false);
+        refetch();
+      }
     } catch (error) {
       console.error("Error saving project:", error);
     }
@@ -165,9 +168,13 @@ export default function ProjectsManager() {
                     </div>
                   </td>
                   <td className="py-4 px-6">
-                    {project.featured && (
+                    {project.featured ? (
                       <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
                         Featured
+                      </span>
+                    ) : (
+                      <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
+                        Not Featured
                       </span>
                     )}
                   </td>
