@@ -3,16 +3,16 @@ import { UploadThingError } from "uploadthing/server";
 
 const f = createUploadthing();
 
-// Fake auth function - replace with your actual auth
-const auth = (req: Request) => ({ id: "fakeId" });
+const auth = (req: Request) => ({ id: "fakeId" }); // Fake auth function
 
+// FileRouter for your app, can contain multiple FileRoutes
 export const ourFileRouter = {
   // Define as many FileRoutes as you like, each with a unique routeSlug
-  imageUploader: f({ image: { maxFileSize: "4MB" } })
+  imageUploader: f({ image: { maxFileSize: "4MB", maxFileCount: 10 } })
     // Set permissions and file types for this FileRoute
     .middleware(async ({ req }) => {
       // This code runs on your server before upload
-      const user = await auth(req);
+      const user = auth(req);
 
       // If you throw, the user will not be able to upload
       if (!user) throw new UploadThingError("Unauthorized");
@@ -23,10 +23,34 @@ export const ourFileRouter = {
     .onUploadComplete(async ({ metadata, file }) => {
       // This code RUNS ON YOUR SERVER after upload
       console.log("Upload complete for userId:", metadata.userId);
-      console.log("file url", file.url);
+      console.log("file url", file.ufsUrl);
 
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
-      return { uploadedBy: metadata.userId };
+      return {
+        uploadedBy: metadata.userId,
+        url: file.ufsUrl,
+        name: file.name,
+        size: file.size,
+      };
+    }),
+
+  // Single image uploader for main images, company logos, etc.
+  singleImageUploader: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
+    .middleware(async ({ req }) => {
+      const user = auth(req);
+      if (!user) throw new UploadThingError("Unauthorized");
+      return { userId: user.id };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("Single image upload complete for userId:", metadata.userId);
+      console.log("file url", file.ufsUrl);
+
+      return {
+        uploadedBy: metadata.userId,
+        url: file.ufsUrl,
+        name: file.name,
+        size: file.size,
+      };
     }),
 } satisfies FileRouter;
 

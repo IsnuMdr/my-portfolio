@@ -1,176 +1,99 @@
-// src/hooks/useMultiImageUpload.ts
-import { useState, useEffect } from "react";
+"use client";
 
-export interface ImageItem {
-  id: string;
-  url: string;
-  isUploading?: boolean;
-  error?: string;
-  isFromServer?: boolean; // Flag untuk membedakan gambar dari server vs yang baru diupload
+import { useState, useCallback } from "react";
+
+interface UseMultiImageUploadOptions {
+  maxFiles?: number;
+  initialUrls?: string[];
+  onUploadComplete?: (urls: string[]) => void;
+  onUploadError?: (error: string) => void;
 }
 
-interface UseMultiImageUploadProps {
-  maxImages?: number;
-  initialImages?: string[]; // Array URL gambar dari server untuk form update
-  onUploadComplete?: (images: ImageItem[]) => void;
-  onUploadError?: (error: Error, imageId: string) => void;
+interface UseMultiImageUploadReturn {
+  urls: string[];
+  isUploading: boolean;
+  uploadError: string | null;
+  addUrls: (newUrls: string[]) => void;
+  removeUrl: (index: number) => void;
+  clearUrls: () => void;
+  setUrls: (urls: string[]) => void;
+  canUploadMore: boolean;
+  remainingSlots: number;
 }
 
 export function useMultiImageUpload({
-  maxImages = 10,
-  initialImages = [],
+  maxFiles = 10,
+  initialUrls = [],
   onUploadComplete,
   onUploadError,
-}: UseMultiImageUploadProps = {}) {
-  const [images, setImages] = useState<ImageItem[]>([]);
+}: UseMultiImageUploadOptions = {}): UseMultiImageUploadReturn {
+  const [urls, setUrlsState] = useState<string[]>(initialUrls);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
-  // Effect for set initial images from server
-  useEffect(() => {
-    if (initialImages.length > 0) {
-      const serverImages: ImageItem[] = initialImages.map((url, index) => ({
-        id: `server_${index}_${Date.now()}`,
-        url,
-        isUploading: false,
-        isFromServer: true,
-      }));
-      setImages(serverImages);
-    }
-  }, [initialImages]);
-  const [uploadingCount, setUploadingCount] = useState(0);
+  const setUrls = useCallback(
+    (newUrls: string[]) => {
+      const limitedUrls = newUrls.slice(0, maxFiles);
+      setUrlsState(limitedUrls);
+      onUploadComplete?.(limitedUrls);
+    },
+    [maxFiles, onUploadComplete]
+  );
 
-  // Generate unique ID for each image
-  const generateId = () =>
-    `img_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const addUrls = useCallback(
+    (newUrls: string[]) => {
+      setUrls([...urls, ...newUrls]);
+    },
+    [urls, setUrls]
+  );
 
-  // Add a new image slot
-  const addImageSlot = () => {
-    if (images.length >= maxImages) {
-      alert(`Maximum ${maxImages} images allowed`);
-      return null;
-    }
+  const removeUrl = useCallback(
+    (indexToRemove: number) => {
+      const updatedUrls = urls.filter((_, index) => index !== indexToRemove);
+      setUrls(updatedUrls);
+    },
+    [urls, setUrls]
+  );
 
-    const newId = generateId();
-    const newImage: ImageItem = {
-      id: newId,
-      url: "",
-      isUploading: false,
-    };
+  const clearUrls = useCallback(() => {
+    setUrls([]);
+  }, [setUrls]);
 
-    setImages((prev) => [...prev, newImage]);
-    return newId;
-  };
+  const handleUploadStart = useCallback(() => {
+    setIsUploading(true);
+    setUploadError(null);
+  }, []);
 
-  // Handle upload start
-  const handleUploadBegin = (imageId: string) => {
-    setImages((prev) =>
-      prev.map((img) =>
-        img.id === imageId
-          ? { ...img, isUploading: true, error: undefined }
-          : img
-      )
-    );
-    setUploadingCount((prev) => prev + 1);
-  };
+  const handleUploadComplete = useCallback(
+    (newUrls: string[]) => {
+      setIsUploading(false);
+      addUrls(newUrls);
+      setUploadError(null);
+    },
+    [addUrls]
+  );
 
-  // Handle upload complete
-  const handleUploadComplete = (imageId: string, url: string) => {
-    setImages((prev) => {
-      const updated = prev.map((img) =>
-        img.id === imageId
-          ? { ...img, url, isUploading: false, error: undefined }
-          : img
-      );
+  const handleUploadError = useCallback(
+    (error: string) => {
+      setIsUploading(false);
+      setUploadError(error);
+      onUploadError?.(error);
+    },
+    [onUploadError]
+  );
 
-      onUploadComplete?.(updated.filter((img) => img.url));
-      return updated;
-    });
-    setUploadingCount((prev) => prev - 1);
-  };
-
-  // Handle upload error
-  const handleUploadError = (imageId: string, error: Error) => {
-    setImages((prev) =>
-      prev.map((img) =>
-        img.id === imageId
-          ? { ...img, isUploading: false, error: error.message }
-          : img
-      )
-    );
-    setUploadingCount((prev) => prev - 1);
-    onUploadError?.(error, imageId);
-  };
-
-  // Remove image
-  const removeImage = (imageId: string) => {
-    setImages((prev) => prev.filter((img) => img.id !== imageId));
-  };
-
-  // Update image URL (for external updates)
-  const updateImageUrl = (imageId: string, url: string) => {
-    setImages((prev) =>
-      prev.map((img) => (img.id === imageId ? { ...img, url } : img))
-    );
-  };
-
-  // Update atau set images dari luar (untuk form update)
-  const setInitialImages = (urls: string[]) => {
-    const serverImages: ImageItem[] = urls.map((url, index) => ({
-      id: `server_${index}_${Date.now()}`,
-      url,
-      isUploading: false,
-      isFromServer: true,
-    }));
-    setImages(serverImages);
-  };
-
-  // Clear images and reset to initial state
-  const resetToInitial = () => {
-    if (initialImages.length > 0) {
-      setInitialImages(initialImages);
-    } else {
-      setImages([]);
-    }
-    setUploadingCount(0);
-  };
-
-  // Reorder images
-  const reorderImages = (startIndex: number, endIndex: number) => {
-    setImages((prev) => {
-      const result = Array.from(prev);
-      const [removed] = result.splice(startIndex, 1);
-      result.splice(endIndex, 0, removed);
-      return result;
-    });
-  };
-
-  // Get uploaded images only
-  const getUploadedImages = () =>
-    images.filter((img) => img.url && !img.isUploading);
-
-  // Get image URLs only
-  const getImageUrls = () => getUploadedImages().map((img) => img.url);
+  const canUploadMore = urls.length < maxFiles;
+  const remainingSlots = maxFiles - urls.length;
 
   return {
-    images,
-    uploadingCount,
-    addImageSlot,
-    handleUploadBegin,
-    handleUploadComplete,
-    handleUploadError,
-    removeImage,
-    updateImageUrl,
-    clearAllImages: () => {
-      setImages([]);
-      setUploadingCount(0);
-    },
-    setInitialImages,
-    resetToInitial,
-    reorderImages,
-    getUploadedImages,
-    getImageUrls,
-    canAddMore: images.length < maxImages,
-    hasImages: images.length > 0,
-    hasUploadedImages: getUploadedImages().length > 0,
-    isUploading: uploadingCount > 0,
+    urls,
+    isUploading,
+    uploadError,
+    addUrls,
+    removeUrl,
+    clearUrls,
+    setUrls,
+    canUploadMore,
+    remainingSlots,
   };
 }

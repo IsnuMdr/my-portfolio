@@ -123,7 +123,7 @@ export default async function AdminProjects() {
                     </td>
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-2">
-                        <a
+                        <Link
                           href={`/projects/${project.id}`}
                           target="_blank"
                           rel="noopener noreferrer"
@@ -131,7 +131,7 @@ export default async function AdminProjects() {
                           title="View Demo"
                         >
                           <ExternalLink size={16} />
-                        </a>
+                        </Link>
                         <Link
                           href={`/admin/projects/${project.id}`}
                           className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"

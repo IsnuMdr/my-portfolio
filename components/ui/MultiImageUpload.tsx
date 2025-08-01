@@ -1,170 +1,175 @@
-// src/components/MultiImageUpload.tsx
+// components/ui/MultiImageUpload.tsx
 "use client";
 
+import { useState, useCallback } from "react";
 import Image from "next/image";
-import { X, Plus, GripVertical } from "lucide-react";
-import { ImageItem } from "@/lib/hooks/useMultiImageUpload";
 import { UploadDropzone } from "@/lib/utils/uploadthing";
+import { X, Plus } from "lucide-react";
 
 interface MultiImageUploadProps {
-  images: ImageItem[];
-  onUploadBegin: (imageId: string) => void;
-  onUploadComplete: (imageId: string, url: string) => void;
-  onUploadError: (imageId: string, error: Error) => void;
-  onRemoveImage: (imageId: string) => void;
-  onAddImage: () => string | null;
-  canAddMore: boolean;
-  disabled?: boolean;
+  value: string[];
+  onChange: (urls: string[]) => void;
+  maxFiles?: number;
   className?: string;
-  maxImages?: number;
 }
 
-export default function MultiImageUpload({
-  images,
-  onUploadBegin,
-  onUploadComplete,
-  onUploadError,
-  onRemoveImage,
-  onAddImage,
-  canAddMore,
-  disabled = false,
+export function MultiImageUpload({
+  value = [],
+  onChange,
+  maxFiles = 10,
   className = "",
-  maxImages = 10,
 }: MultiImageUploadProps) {
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  const handleUploadComplete = useCallback(
+    (res: any[]) => {
+      if (res && res.length > 0) {
+        const newUrls = res.map((file) => file.url);
+        const updatedUrls = [...value, ...newUrls].slice(0, maxFiles);
+        onChange(updatedUrls);
+        setIsUploading(false);
+        setUploadError(null);
+      }
+    },
+    [value, onChange, maxFiles]
+  );
+
+  const handleUploadError = useCallback((error: Error) => {
+    console.error("Upload error:", error);
+    setUploadError(error.message || "Failed to upload images");
+    setIsUploading(false);
+  }, []);
+
+  const handleUploadBegin = useCallback(() => {
+    setIsUploading(true);
+    setUploadError(null);
+  }, []);
+
+  const removeImage = useCallback(
+    (indexToRemove: number) => {
+      const updatedUrls = value.filter((_, index) => index !== indexToRemove);
+      onChange(updatedUrls);
+    },
+    [value, onChange]
+  );
+
+  const canUploadMore = value.length < maxFiles;
+
   return (
-    <div className={`w-full ${className}`}>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {/* Existing Images */}
-        {images.map((image, index) => (
-          <div key={image.id} className="relative group">
-            {image.url ? (
-              // Uploaded Image Preview
-              <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200">
+    <div className={`space-y-4 ${className}`}>
+      {/* Existing Images Preview */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        {value.length > 0 &&
+          value.map((url, index) => (
+            <div key={`${url}-${index}`} className="relative group">
+              <div className="aspect-square relative overflow-hidden rounded-lg border-2 border-gray-200">
                 <Image
-                  src={image.url}
-                  alt={`Product image ${index + 1}`}
+                  src={url}
+                  alt={`Upload ${index + 1}`}
                   fill
                   className="object-cover"
+                  sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                 />
-                {!disabled && (
-                  <>
-                    {/* Remove Button */}
-                    <button
-                      onClick={() => onRemoveImage(image.id)}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 transition-colors shadow-md opacity-0 group-hover:opacity-100"
-                      type="button"
-                      title="Remove image"
-                    >
-                      <X size={14} />
-                    </button>
-
-                    {/* Server Image Indicator */}
-                    {image.isFromServer && (
-                      <div className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100">
-                        Server
-                      </div>
-                    )}
-
-                    {/* Drag Handle - hanya tampil jika bukan sedang upload */}
-                    {!image.isFromServer && (
-                      <div className="absolute top-2 left-2 bg-black bg-opacity-50 text-white rounded p-1 opacity-0 group-hover:opacity-100 cursor-move">
-                        <GripVertical size={14} />
-                      </div>
-                    )}
-                  </>
-                )}
-
-                {/* Image Number */}
-                <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
-                  {index + 1}
+                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center">
+                  <button
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    className="opacity-0 group-hover:opacity-100 bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition-all duration-200 transform scale-90 hover:scale-100"
+                    title="Remove image"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
-            ) : (
-              // Upload Dropzone
-              <div className="aspect-square">
-                <UploadDropzone
-                  endpoint="imageUploader"
-                  onClientUploadComplete={(res) => {
-                    if (res && res.length > 0) {
-                      onUploadComplete(image.id, res[0].url);
-                    }
-                  }}
-                  onUploadError={(error) => {
-                    onUploadError(image.id, error);
-                  }}
-                  onUploadBegin={() => {
-                    onUploadBegin(image.id);
-                  }}
-                  config={{ mode: "auto" }}
-                  appearance={{
-                    container: `h-full border-2 border-dashed border-gray-300 rounded-lg p-2 ${
-                      disabled || image.isUploading
-                        ? "opacity-50 cursor-not-allowed"
-                        : "hover:border-gray-400 hover:bg-gray-50"
-                    }`,
-                    uploadIcon: "text-gray-400",
-                    label: "text-gray-600 text-xs font-medium",
-                    allowedContent: "text-gray-500 text-xs",
-                  }}
-                  content={{
-                    label: image.isUploading ? "Uploading..." : "Upload",
-                    allowedContent: "PNG, JPG up to 4MB",
-                  }}
-                  disabled={disabled || image.isUploading}
-                />
+            </div>
+          ))}
+        <div className="aspect-square flex flex-col justify-center border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 transition-colors p-5">
+          <UploadDropzone
+            endpoint="imageUploader"
+            onClientUploadComplete={handleUploadComplete}
+            onUploadError={handleUploadError}
+            onUploadBegin={handleUploadBegin}
+            config={{
+              mode: "auto",
+            }}
+            appearance={{
+              container: "border-none bg-transparent",
+              uploadIcon: "text-gray-400",
+              label: "text-gray-600 text-sm",
+              allowedContent: "text-gray-500 text-xs",
+              button:
+                "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm ut-ready:bg-blue-600 ut-uploading:bg-blue-500",
+            }}
+            content={{
+              uploadIcon: () => <Plus className="w-8 h-8" />,
+              label:
+                value.length > 0
+                  ? "Add more images"
+                  : "Choose images to upload",
+              allowedContent: "Images up to 4MB each",
+            }}
+          />
+        </div>
+      </div>
 
-                {/* Remove Empty Slot Button */}
-                {!disabled && !image.isUploading && (
-                  <button
-                    onClick={() => onRemoveImage(image.id)}
-                    className="absolute -top-2 -right-2 bg-gray-500 text-white rounded-full p-1 hover:bg-gray-600 transition-colors text-xs"
-                    type="button"
-                    title="Remove slot"
-                  >
-                    <X size={12} />
-                  </button>
-                )}
-
-                {/* Error Display */}
-                {image.error && (
-                  <div className="absolute bottom-0 left-0 right-0 bg-red-500 text-white text-xs p-1 rounded-b-lg">
-                    Error: {image.error}
-                  </div>
-                )}
+      {/* Upload Area */}
+      {canUploadMore && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-gray-600">
+              {value.length > 0
+                ? `Add more images (${value.length}/${maxFiles})`
+                : `Upload images (max ${maxFiles})`}
+            </p>
+            {isUploading && (
+              <div className="text-sm text-blue-600 flex items-center">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                Uploading...
               </div>
             )}
           </div>
-        ))}
+        </div>
+      )}
 
-        {/* Add New Image Button */}
-        {canAddMore && !disabled && (
-          <button
-            onClick={onAddImage}
-            className="aspect-square border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center hover:border-gray-400 hover:bg-gray-50 transition-colors group"
-            type="button"
-          >
-            <Plus
-              className="text-gray-400 group-hover:text-gray-600 mb-1"
-              size={24}
-            />
-            <span className="text-xs text-gray-500 font-medium">Add Image</span>
-            <span className="text-xs text-gray-400">
-              {images.length}/{maxImages}
-            </span>
-          </button>
-        )}
-      </div>
+      {/* Upload Error */}
+      {uploadError && (
+        <div className="bg-red-50 border border-red-200 rounded-md p-3">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <X className="h-5 w-5 text-red-400" />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-red-800">{uploadError}</p>
+            </div>
+            <div className="ml-auto pl-3">
+              <button
+                type="button"
+                onClick={() => setUploadError(null)}
+                className="text-red-400 hover:text-red-600"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-      {/* Summary */}
-      {images.length > 0 && (
-        <div className="mt-4 text-sm text-gray-600">
-          <p>
-            {images.filter((img) => img.url).length} of {images.length} images
-            uploaded
-            {images.some((img) => img.isUploading) && " (uploading...)"}
+      {/* Max Files Reached */}
+      {!canUploadMore && (
+        <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+          <p className="text-sm text-blue-800">
+            Maximum number of images reached ({maxFiles}/{maxFiles})
           </p>
         </div>
       )}
+
+      {/* Helper Text */}
+      <div className="text-xs text-gray-500">
+        <p>• Supported formats: JPEG, PNG, WebP</p>
+        <p>• Maximum file size: 4MB per image</p>
+        <p>• You can upload multiple images at once</p>
+      </div>
     </div>
   );
 }

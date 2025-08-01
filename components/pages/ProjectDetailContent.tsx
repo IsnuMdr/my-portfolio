@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   ArrowLeft,
   ExternalLink,
@@ -33,15 +33,40 @@ export const ProjectDetailContent = ({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showFullImage, setShowFullImage] = useState(false);
 
+  // Combine main image with detail images for carousel
+  const allImages = useMemo(() => {
+    const images = [];
+
+    // Add main image as first item if it exists
+    if (project.imageUrl) {
+      images.push({
+        imageUrl: project.imageUrl,
+        isMainImage: true,
+      });
+    }
+
+    // Add detail images
+    if (project.images && project.images.length > 0) {
+      images.push(
+        ...project.images.map((img) => ({
+          ...img,
+          isMainImage: false,
+        }))
+      );
+    }
+
+    return images;
+  }, [project.imageUrl, project.images]);
+
   const nextImage = () => {
     setCurrentImageIndex((prev) =>
-      prev === project.images.length - 1 ? 0 : prev + 1
+      prev === allImages.length - 1 ? 0 : prev + 1
     );
   };
 
   const prevImage = () => {
     setCurrentImageIndex((prev) =>
-      prev === 0 ? project.images.length - 1 : prev - 1
+      prev === 0 ? allImages.length - 1 : prev - 1
     );
   };
 
@@ -242,76 +267,89 @@ export const ProjectDetailContent = ({
             <AnimatedSection delay={0.2}>
               <div>
                 {/* Main Image */}
-                <div className="relative aspect-project rounded-2xl overflow-hidden shadow-large mb-4">
-                  <motion.img
-                    key={currentImageIndex}
-                    src={project.images[currentImageIndex].imageUrl}
-                    alt={`${project.title} - Image ${currentImageIndex + 1}`}
-                    className="w-full h-full object-cover cursor-zoom-in"
-                    initial={{ opacity: 0, scale: 1.1 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.5 }}
-                    onClick={() => setShowFullImage(true)}
-                  />
+                {allImages.length > 0 && (
+                  <div className="relative aspect-project rounded-2xl overflow-hidden shadow-large mb-4">
+                    <motion.img
+                      key={currentImageIndex}
+                      src={allImages[currentImageIndex].imageUrl}
+                      alt={`${project.title} - ${
+                        allImages[currentImageIndex].isMainImage
+                          ? "Main"
+                          : "Image"
+                      } ${currentImageIndex + 1}`}
+                      className="w-full h-full object-cover cursor-zoom-in"
+                      initial={{ opacity: 0, scale: 1.1 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5 }}
+                      onClick={() => setShowFullImage(true)}
+                    />
 
-                  {/* Navigation Arrows */}
-                  {project.images && project.images.length > 1 && (
-                    <>
-                      <motion.button
-                        onClick={prevImage}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        className="absolute left-4 top-1/2 transform -translate-y-1/2 p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-medium hover:bg-white transition-all duration-300"
-                      >
-                        <ChevronLeft size={24} />
-                      </motion.button>
+                    {/* Main Image Badge */}
+                    {allImages[currentImageIndex].isMainImage && (
+                      <div className="absolute top-4 left-4 px-3 py-1 bg-primary-500/90 backdrop-blur-sm text-white text-sm font-medium rounded-full">
+                        Main Image
+                      </div>
+                    )}
 
-                      <motion.button
-                        onClick={nextImage}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-medium hover:bg-white transition-all duration-300"
-                      >
-                        <ChevronRight size={24} />
-                      </motion.button>
-                    </>
-                  )}
+                    {/* Navigation Arrows */}
+                    {allImages.length > 1 && (
+                      <>
+                        <motion.button
+                          onClick={prevImage}
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="absolute left-4 top-1/2 transform -translate-y-1/2 p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-medium hover:bg-white transition-all duration-300"
+                        >
+                          <ChevronLeft size={24} />
+                        </motion.button>
 
-                  {/* Image Counter */}
-                  {project.images && project.images.length > 1 && (
-                    <div className="absolute top-4 right-4 px-3 py-1 bg-black/50 backdrop-blur-sm text-white text-sm rounded-full">
-                      {currentImageIndex + 1} / {project.images.length}
-                    </div>
-                  )}
+                        <motion.button
+                          onClick={nextImage}
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          className="absolute right-4 top-1/2 transform -translate-y-1/2 p-3 bg-white/90 backdrop-blur-sm rounded-full shadow-medium hover:bg-white transition-all duration-300"
+                        >
+                          <ChevronRight size={24} />
+                        </motion.button>
+                      </>
+                    )}
 
-                  {/* Image Indicators */}
-                  {project.images && project.images.length > 1 && (
-                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-                      {project.images.map((_, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setCurrentImageIndex(index)}
-                          className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                            index === currentImageIndex
-                              ? "bg-white shadow-medium scale-125"
-                              : "bg-white/50 hover:bg-white/80"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
+                    {/* Image Counter */}
+                    {allImages.length > 1 && (
+                      <div className="absolute top-4 right-4 px-3 py-1 bg-black/50 backdrop-blur-sm text-white text-sm rounded-full">
+                        {currentImageIndex + 1} / {allImages.length}
+                      </div>
+                    )}
+
+                    {/* Image Indicators */}
+                    {allImages.length > 1 && (
+                      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+                        {allImages.map((_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setCurrentImageIndex(index)}
+                            className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                              index === currentImageIndex
+                                ? "bg-white shadow-medium scale-125"
+                                : "bg-white/50 hover:bg-white/80"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Thumbnail Navigation */}
-                {project.images && project.images.length > 1 && (
+                {allImages.length > 1 && (
                   <div className="grid grid-cols-4 gap-2">
-                    {project.images.map((image, index) => (
+                    {allImages.map((image, index) => (
                       <motion.button
                         key={index}
                         onClick={() => setCurrentImageIndex(index)}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className={`aspect-square rounded-lg overflow-hidden transition-all duration-300 ${
+                        className={`aspect-square rounded-lg overflow-hidden transition-all duration-300 relative ${
                           index === currentImageIndex
                             ? "ring-2 ring-primary-500 opacity-100"
                             : "opacity-70 hover:opacity-100"
@@ -325,6 +363,12 @@ export const ProjectDetailContent = ({
                           className="w-full h-full object-cover"
                           lazy={true}
                         />
+                        {/* Main image indicator on thumbnail */}
+                        {image.isMainImage && (
+                          <div className="absolute inset-0 bg-primary-500/20 flex items-center justify-center">
+                            <Star size={16} className="text-primary-600" />
+                          </div>
+                        )}
                       </motion.button>
                     ))}
                   </div>
@@ -488,36 +532,6 @@ export const ProjectDetailContent = ({
         </div>
       </section>
 
-      {/* Testimonial Section */}
-      {/* {project.testimonial.length > 0 && (
-        <section className="py-16 bg-white">
-          <div className="container-elegant">
-            <AnimatedSection>
-              <div className="max-w-4xl mx-auto text-center">
-                <Quote size={64} className="text-primary-200 mx-auto mb-8" />
-                <blockquote className="text-2xl md:text-3xl font-light text-gray-800 mb-8 leading-relaxed italic">
-                  &quot;{project.testimonial.quote}&quot;
-                </blockquote>
-                <div className="flex items-center justify-center gap-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-primary-100 to-accent-100 rounded-full flex items-center justify-center">
-                    <User size={28} className="text-primary-600" />
-                  </div>
-                  <div className="text-left">
-                    <div className="font-bold text-xl text-gray-900">
-                      {project.testimonial.author}
-                    </div>
-                    <div className="text-gray-600">
-                      {project.testimonial.position} at{" "}
-                      {project.testimonial.company}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </AnimatedSection>
-          </div>
-        </section>
-      )} */}
-
       {/* Project Overview */}
       <section className="py-16 bg-gradient-section">
         <div className="container-elegant">
@@ -565,7 +579,7 @@ export const ProjectDetailContent = ({
       </section>
 
       {/* Full Screen Image Modal */}
-      {showFullImage && (
+      {showFullImage && allImages.length > 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -579,16 +593,14 @@ export const ProjectDetailContent = ({
             exit={{ scale: 0.5 }}
             className="relative max-w-7xl max-h-full"
           >
-            {project.images && (
-              <OptimizedImage
-                src={project.images[currentImageIndex].imageUrl}
-                width={600}
-                height={400}
-                alt={`${project.title} - Full size`}
-                className="max-w-full max-h-full object-contain rounded-lg"
-                lazy={true}
-              />
-            )}
+            <OptimizedImage
+              src={allImages[currentImageIndex].imageUrl}
+              width={600}
+              height={400}
+              alt={`${project.title} - Full size`}
+              className="max-w-full max-h-full object-contain rounded-lg"
+              lazy={true}
+            />
 
             <button
               onClick={() => setShowFullImage(false)}
