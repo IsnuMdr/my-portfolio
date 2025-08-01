@@ -1,385 +1,402 @@
 "use client";
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { X } from "lucide-react";
-import { Project, ProjectData } from "@/types/project";
-import { ProjectCategories } from "@prisma/client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Project } from "@prisma/client";
 import ImageUpload from "../ui/ImageUpload";
-import { useMultiImageUpload } from "@/lib/hooks/useMultiImageUpload";
-import MultiImageUpload from "../ui/MultiImageUpload";
+// import MultiImageUpload from "../ui/MultiImageUpload";
 
 interface ProjectFormProps {
-  project: Project | null;
-  onSave: (project: ProjectData) => void;
-  onCancel: () => void;
+  project?:
+    | (Project & { images: Array<{ id: string; imageUrl: string }> })
+    | null;
+  isEditing?: boolean;
 }
 
-export const ProjectForm = ({
-  project,
-  onSave,
-  onCancel,
-}: ProjectFormProps) => {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    longDescription: "",
-    imageUrl: "",
-    demoUrl: "",
-    githubUrl: "",
-    technologies: "",
-    featured: false,
-    category: "fullstack",
-    completedAt: new Date().toISOString().split("T")[0],
-    slug: "",
-    results: "",
-    features: "",
-    duration: "",
-    teamSize: 0,
-  });
-  const [imageUrl, setImageUrl] = useState<string>("");
+interface FormData {
+  id?: string;
+  title: string;
+  description: string;
+  longDescription: string;
+  technologies: string;
+  imageUrl: string;
+  images: string[];
+  githubUrl: string;
+  demoUrl: string;
+  featured: boolean;
+  category: string;
+  completedAt: Date;
+  duration: string;
+  teamSize: number;
+}
 
-  useEffect(() => {
-    if (project) {
-      setFormData({
-        title: project.title,
-        description: project.description,
-        longDescription: project.longDescription || "",
-        imageUrl: project.imageUrl || "",
-        demoUrl: project.demoUrl || "",
-        githubUrl: project.githubUrl || "",
-        technologies: project.technologies.join(", "),
-        featured: project.featured,
-        category: project.category,
-        completedAt: new Date(project.completedAt).toISOString().split("T")[0],
-        slug: project.slug || "",
-        results: project.results.join(", "),
-        features: project.features.join(", "),
-        duration: project.duration || "",
-        teamSize: project.teamSize || 0,
-      });
-    }
-  }, [project]);
-
-  const {
-    images: detailImages,
-    addImageSlot,
-    handleUploadBegin,
-    handleUploadComplete,
-    handleUploadError,
-    removeImage,
-    getImageUrls,
-    canAddMore,
-  } = useMultiImageUpload({
-    maxImages: 8,
-    onUploadComplete: (images) => {
-      setFormData((prev) => ({
-        ...prev,
-        images: images.map((img) => {
-          return {
-            imageUrl: img.url,
-          };
-        }),
-      }));
-    },
+export function ProjectForm({ project, isEditing = false }: ProjectFormProps) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState<FormData>({
+    title: project?.title || "",
+    description: project?.description || "",
+    longDescription: project?.longDescription || "",
+    technologies: project?.technologies?.join(", ") || "",
+    imageUrl: project?.imageUrl || "",
+    images: project?.images?.map((img) => img.imageUrl) || [],
+    githubUrl: project?.githubUrl || "",
+    demoUrl: project?.demoUrl || "",
+    featured: project?.featured || false,
+    category: project?.category || "fullstack",
+    completedAt: project?.completedAt
+      ? new Date(project.completedAt)
+      : new Date(),
+    duration: project?.duration || "",
+    teamSize: project?.teamSize || 1,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
-      onSave({
+      if (isEditing) {
+        formData.id = project?.id as string;
+      }
+
+      const payload = {
         ...formData,
-        imageUrl: imageUrl,
-        category: formData.category as ProjectCategories,
-        completedAt: new Date(formData.completedAt),
         technologies: formData.technologies
           .split(",")
-          .map((tech) => tech.trim()),
-        results: formData.results.split(",").map((result) => result.trim()),
-        features: formData.features.split(",").map((feature) => feature.trim()),
+          .map((tech) => tech.trim())
+          .filter(Boolean),
+      };
+
+      const method = isEditing ? "PUT" : "POST";
+
+      const response = await fetch("/api/projects", {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to save project");
+      }
+
+      router.push("/admin/projects");
+      router.refresh();
     } catch (error) {
-      console.error(error);
+      console.error("Error saving project:", error);
+      alert("Error saving project. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
+  const handleInputChange = (
+    field: keyof FormData,
+    value: string | boolean | string[] | number
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-    >
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-      >
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-gray-900">
-              {project ? "Edit Project" : "Add New Project"}
-            </h2>
-            <button
-              onClick={onCancel}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <X size={20} />
-            </button>
-          </div>
-        </div>
+    <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="bg-white shadow rounded-lg">
+        <div className="px-4 py-5 sm:p-6">
+          <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+            {/* Title */}
+            <div className="sm:col-span-4">
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Project Title *
+              </label>
+              <input
+                type="text"
+                id="title"
+                required
+                value={formData.title}
+                onChange={(e) => handleInputChange("title", e.target.value)}
+                className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                autoComplete="title"
+              />
+            </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Project Title *
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.title}
-              onChange={(e) =>
-                setFormData({ ...formData, title: e.target.value })
-              }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Description *
-            </label>
-            <input
-              type="text"
-              required
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Long Description
-            </label>
-            <textarea
-              rows={3}
-              value={formData.longDescription}
-              onChange={(e) =>
-                setFormData({ ...formData, longDescription: e.target.value })
-              }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Category *
+            {/* Category */}
+            <div className="sm:col-span-2">
+              <label
+                htmlFor="category"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Category
               </label>
               <select
-                required
+                id="category"
                 value={formData.category}
-                onChange={(e) =>
-                  setFormData({ ...formData, category: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                onChange={(e) => handleInputChange("category", e.target.value)}
+                className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                autoComplete="category"
               >
-                <option value={ProjectCategories.fullstack}>Full Stack</option>
-                <option value={ProjectCategories.frontend}>Frontend</option>
-                <option value={ProjectCategories.backend}>Backend</option>
-                <option value={ProjectCategories.mobile}>Mobile</option>
+                <option value="fullstack">Full Stack</option>
+                <option value="backend">Backend</option>
+                <option value="frontend">Frontend</option>
+                <option value="mobile">Mobile</option>
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Completed Date *
+            {/* Short Description */}
+            <div className="sm:col-span-6">
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Short Description *
               </label>
               <input
-                type="date"
+                type="text"
+                id="description"
                 required
-                value={formData.completedAt}
+                value={formData.description}
                 onChange={(e) =>
-                  setFormData({ ...formData, completedAt: e.target.value })
+                  handleInputChange("description", e.target.value)
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Brief description for project cards"
+                autoComplete="description"
               />
             </div>
-          </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Technologies (comma separated) *
-            </label>
-            <input
-              type="text"
-              required
-              placeholder="React, Next.js, TypeScript"
-              value={formData.technologies}
-              onChange={(e) =>
-                setFormData({ ...formData, technologies: e.target.value })
-              }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            />
-          </div>
+            {/* Full Description */}
+            <div className="sm:col-span-6">
+              <label
+                htmlFor="longDescription"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Full Description *
+              </label>
+              <textarea
+                id="longDescription"
+                required
+                rows={6}
+                value={formData.longDescription}
+                onChange={(e) =>
+                  handleInputChange("longDescription", e.target.value)
+                }
+                className="mt-1 textarea-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Detailed project description, features, challenges overcome, etc."
+                autoComplete="longDescription"
+              />
+            </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Image URL
-            </label>
-            <ImageUpload
-              value={imageUrl || formData.imageUrl}
-              onChange={(url) => setImageUrl(url || "")}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Demo URL
+            {/* Technologies */}
+            <div className="sm:col-span-6">
+              <label
+                htmlFor="technologies"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Technologies *
               </label>
               <input
-                type="url"
-                value={formData.demoUrl}
+                type="text"
+                id="technologies"
+                required
+                value={formData.technologies}
                 onChange={(e) =>
-                  setFormData({ ...formData, demoUrl: e.target.value })
+                  handleInputChange("technologies", e.target.value)
                 }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="React, Next.js, TypeScript, Tailwind CSS (comma separated)"
+                autoComplete="technologies"
               />
+              <p className="mt-2 text-sm text-gray-500">
+                Separate technologies with commas
+              </p>
             </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
+            {/* URLs */}
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="githubUrl"
+                className="block text-sm font-medium text-gray-700"
+              >
                 GitHub URL
               </label>
               <input
                 type="url"
+                id="githubUrl"
                 value={formData.githubUrl}
-                onChange={(e) =>
-                  setFormData({ ...formData, githubUrl: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                onChange={(e) => handleInputChange("githubUrl", e.target.value)}
+                className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="https://github.com/username/repo"
+                autoComplete="githubUrl"
               />
             </div>
-          </div>
 
-          <div>
-            <label className="flex items-center gap-2">
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="demoUrl"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Live Demo URL
+              </label>
               <input
-                type="checkbox"
-                checked={formData.featured}
-                onChange={(e) =>
-                  setFormData({ ...formData, featured: e.target.checked })
-                }
-                className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                type="url"
+                id="demoUrl"
+                value={formData.demoUrl}
+                onChange={(e) => handleInputChange("demoUrl", e.target.value)}
+                className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="https://your-project.com"
+                autoComplete="demoUrl"
               />
-              <span className="text-sm font-semibold text-gray-700">
-                Featured Project
-              </span>
-            </label>
-          </div>
+            </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Results (comma separated)
+            {/* Durations */}
+
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="completedAt"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Completed At
+              </label>
+              <input
+                type="date"
+                id="completedAt"
+                value={formData.completedAt.toISOString().split("T")[0]}
+                onChange={(e) =>
+                  handleInputChange("completedAt", e.target.value)
+                }
+                className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                autoComplete="completedAt"
+              />
+            </div>
+
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="duration"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Duration
+              </label>
+              <input
+                type="text"
+                id="duration"
+                value={formData.duration}
+                onChange={(e) => handleInputChange("duration", e.target.value)}
+                className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="3 months"
+                autoComplete="duration"
+              />
+            </div>
+
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="teamSize"
+                className="block text-sm font-medium text-gray-700"
+              >
+                teamSize
+              </label>
+              <input
+                type="number"
+                id="teamSize"
+                value={formData.teamSize}
+                onChange={(e) => handleInputChange("teamSize", e.target.value)}
+                className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="3 months"
+                autoComplete="teamSize"
+              />
+            </div>
+
+            {/* Featured */}
+            <div className="sm:col-span-6">
+              <div className="flex items-start">
+                <div className="flex items-center h-5">
+                  <input
+                    id="featured"
+                    type="checkbox"
+                    checked={formData.featured}
+                    onChange={(e) =>
+                      handleInputChange("featured", e.target.checked)
+                    }
+                    className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  />
+                </div>
+                <div className="ml-3 text-sm">
+                  <label
+                    htmlFor="featured"
+                    className="font-medium text-gray-700"
+                  >
+                    Featured Project
+                  </label>
+                  <p className="text-gray-500">
+                    Featured projects will be highlighted on the homepage
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Images Section */}
+      <div className="bg-white shadow rounded-lg">
+        <div className="px-4 py-5 sm:p-6">
+          <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+            Project Images
+          </h3>
+
+          {/* Main Image */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Main Image (Thumbnail) *
             </label>
-            <input
-              type="text"
-              value={formData.results}
-              onChange={(e) =>
-                setFormData({ ...formData, results: e.target.value })
-              }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            <ImageUpload
+              value={formData.imageUrl}
+              onChange={(url) => handleInputChange("imageUrl", url || "")}
             />
+            <p className="mt-2 text-sm text-gray-500">
+              This image will be used as the project thumbnail in listings
+            </p>
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Features (comma separated)
-            </label>
-            <input
-              type="text"
-              value={formData.features}
-              onChange={(e) =>
-                setFormData({ ...formData, features: e.target.value })
-              }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Duration
-            </label>
-            <input
-              type="text"
-              value={formData.duration}
-              onChange={(e) =>
-                setFormData({ ...formData, duration: e.target.value })
-              }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Team Size
-            </label>
-            <input
-              type="number"
-              value={formData.teamSize}
-              onChange={(e) =>
-                setFormData({ ...formData, teamSize: Number(e.target.value) })
-              }
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            />
-          </div>
-
+          {/* Detail Images */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Additional Product Images
-              <span className="text-gray-500 font-normal">
-                (Optional - up to 8 images)
-              </span>
+              Detail Images (Slideshow)
             </label>
-            <p className="text-sm text-gray-600 mb-4">
-              Add more images to showcase different angles, details, or
-              variations of your product.
+            {/* <MultiImageUpload
+              value={formData.images}
+              onChange={(urls) => handleInputChange("images", urls)}
+              maxFiles={10}
+            /> */}
+            <p className="mt-2 text-sm text-gray-500">
+              These images will be shown in the project detail slideshow (max 10
+              images)
             </p>
-
-            <MultiImageUpload
-              images={detailImages}
-              onUploadBegin={handleUploadBegin}
-              onUploadComplete={handleUploadComplete}
-              onUploadError={handleUploadError}
-              onRemoveImage={removeImage}
-              onAddImage={addImageSlot}
-              canAddMore={canAddMore}
-              // disabled={isSubmitting}
-              maxImages={8}
-            />
           </div>
+        </div>
+      </div>
 
-          <div className="flex justify-end gap-4 pt-6 border-t border-gray-200">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-            >
-              {project ? "Update" : "Create"} Project
-            </button>
-          </div>
-        </form>
-      </motion.div>
-    </motion.div>
+      {/* Form Actions */}
+      <div className="flex justify-end space-x-3">
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          disabled={loading}
+          className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+        >
+          {loading
+            ? "Saving..."
+            : isEditing
+            ? "Update Project"
+            : "Create Project"}
+        </button>
+      </div>
+    </form>
   );
-};
+}

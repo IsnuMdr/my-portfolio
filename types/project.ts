@@ -19,7 +19,7 @@ export interface Project {
   challenge?: string | null;
   solution?: string | null;
   results: string[];
-  images?: ProjectImage[];
+  images: ProjectImage[] | ProjectImageData[];
   features: string[];
   category: ProjectCategories;
   duration: string;
@@ -29,3 +29,7 @@ export interface Project {
 }
 
 export type ProjectData = Omit<Project, "id">;
+export type ProjectImageData = Omit<
+  ProjectImage,
+  "id" | "projectId" | "createdAt" | "updatedAt"
+>;

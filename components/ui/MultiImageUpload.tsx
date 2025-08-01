@@ -31,13 +31,6 @@ export default function MultiImageUpload({
   className = "",
   maxImages = 10,
 }: MultiImageUploadProps) {
-  const deleteImageOnServer = async (value: string) => {
-    await fetch("/api/uploadthing", {
-      method: "DELETE",
-      body: JSON.stringify({ url: value }),
-    });
-  };
-
   return (
     <div className={`w-full ${className}`}>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -57,10 +50,7 @@ export default function MultiImageUpload({
                   <>
                     {/* Remove Button */}
                     <button
-                      onClick={() => {
-                        onRemoveImage(image.id);
-                        deleteImageOnServer(image.url);
-                      }}
+                      onClick={() => onRemoveImage(image.id)}
                       className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 transition-colors shadow-md opacity-0 group-hover:opacity-100"
                       type="button"
                       title="Remove image"
@@ -68,10 +58,19 @@ export default function MultiImageUpload({
                       <X size={14} />
                     </button>
 
-                    {/* Drag Handle */}
-                    <div className="absolute top-2 left-2 bg-black bg-opacity-50 text-white rounded p-1 opacity-0 group-hover:opacity-100 cursor-move">
-                      <GripVertical size={14} />
-                    </div>
+                    {/* Server Image Indicator */}
+                    {image.isFromServer && (
+                      <div className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100">
+                        Server
+                      </div>
+                    )}
+
+                    {/* Drag Handle - hanya tampil jika bukan sedang upload */}
+                    {!image.isFromServer && (
+                      <div className="absolute top-2 left-2 bg-black bg-opacity-50 text-white rounded p-1 opacity-0 group-hover:opacity-100 cursor-move">
+                        <GripVertical size={14} />
+                      </div>
+                    )}
                   </>
                 )}
 
@@ -87,7 +86,7 @@ export default function MultiImageUpload({
                   endpoint="imageUploader"
                   onClientUploadComplete={(res) => {
                     if (res && res.length > 0) {
-                      onUploadComplete(image.id, res[0].ufsUrl);
+                      onUploadComplete(image.id, res[0].url);
                     }
                   }}
                   onUploadError={(error) => {

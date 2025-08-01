@@ -95,9 +95,12 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
       {/* Project Content */}
       <div className="p-6 flex-1 flex flex-col">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xl font-bold text-gray-900 group-hover:text-primary-600 transition-colors duration-300">
+          <Link
+            href={`/projects/${project.id}`}
+            className="text-xl font-bold text-gray-900 group-hover:text-primary-600 transition-colors duration-300"
+          >
             {project.title}
-          </h3>
+          </Link>
           <div className="flex items-center text-sm text-gray-500">
             <Calendar size={14} className="mr-1" />
             {new Date(project.completedAt).toLocaleDateString("en-US", {

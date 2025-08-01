@@ -1,24 +1,41 @@
-import { useState } from "react";
+// src/hooks/useMultiImageUpload.ts
+import { useState, useEffect } from "react";
 
 export interface ImageItem {
   id: string;
   url: string;
   isUploading?: boolean;
   error?: string;
+  isFromServer?: boolean; // Flag untuk membedakan gambar dari server vs yang baru diupload
 }
 
 interface UseMultiImageUploadProps {
   maxImages?: number;
+  initialImages?: string[]; // Array URL gambar dari server untuk form update
   onUploadComplete?: (images: ImageItem[]) => void;
   onUploadError?: (error: Error, imageId: string) => void;
 }
 
 export function useMultiImageUpload({
   maxImages = 10,
+  initialImages = [],
   onUploadComplete,
   onUploadError,
 }: UseMultiImageUploadProps = {}) {
   const [images, setImages] = useState<ImageItem[]>([]);
+
+  // Effect for set initial images from server
+  useEffect(() => {
+    if (initialImages.length > 0) {
+      const serverImages: ImageItem[] = initialImages.map((url, index) => ({
+        id: `server_${index}_${Date.now()}`,
+        url,
+        isUploading: false,
+        isFromServer: true,
+      }));
+      setImages(serverImages);
+    }
+  }, [initialImages]);
   const [uploadingCount, setUploadingCount] = useState(0);
 
   // Generate unique ID for each image
@@ -95,9 +112,24 @@ export function useMultiImageUpload({
     );
   };
 
-  // Clear all images
-  const clearAllImages = () => {
-    setImages([]);
+  // Update atau set images dari luar (untuk form update)
+  const setInitialImages = (urls: string[]) => {
+    const serverImages: ImageItem[] = urls.map((url, index) => ({
+      id: `server_${index}_${Date.now()}`,
+      url,
+      isUploading: false,
+      isFromServer: true,
+    }));
+    setImages(serverImages);
+  };
+
+  // Clear images and reset to initial state
+  const resetToInitial = () => {
+    if (initialImages.length > 0) {
+      setInitialImages(initialImages);
+    } else {
+      setImages([]);
+    }
     setUploadingCount(0);
   };
 
@@ -127,7 +159,12 @@ export function useMultiImageUpload({
     handleUploadError,
     removeImage,
     updateImageUrl,
-    clearAllImages,
+    clearAllImages: () => {
+      setImages([]);
+      setUploadingCount(0);
+    },
+    setInitialImages,
+    resetToInitial,
     reorderImages,
     getUploadedImages,
     getImageUrls,

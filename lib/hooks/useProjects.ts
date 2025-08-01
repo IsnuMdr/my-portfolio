@@ -100,6 +100,8 @@ export const useDeleteProject = () => {
         body: JSON.stringify({ id }),
       });
       if (!response.ok) throw new Error("Failed to delete project");
+      const data = await response.json();
+      return data;
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {

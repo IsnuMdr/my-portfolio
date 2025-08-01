@@ -39,9 +39,14 @@ export default function ImageUpload({
   if (value && showPreview) {
     return (
       <div
-        className={`relative w-full h-60 rounded-lg overflow-hidden border-2 border-dashed border-gray-300 ${className}`}
+        className={`relative w-full h-96 rounded-lg overflow-hidden border-2 border-dashed border-gray-300 ${className}`}
       >
-        <Image src={value} alt="Uploaded image" fill className="object-cover" />
+        <Image
+          src={value}
+          layout="fill"
+          alt="Uploaded image"
+          className="object-cover"
+        />
         {!disabled && (
           <button
             onClick={() => handleRemove(value)}
