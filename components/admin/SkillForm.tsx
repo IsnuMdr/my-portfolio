@@ -62,14 +62,14 @@ export function SkillForm({ skill, isEditing = false }: SkillFormProps) {
   };
 
   const categories = [
-    "frontend",
-    "backend",
-    "database",
-    "mobile",
-    "devops",
-    "design",
-    "testing",
-    "other",
+    "Frontend",
+    "Backend",
+    "Database",
+    "Mobile",
+    "DevOps",
+    "Design",
+    "Testing",
+    "Other",
   ];
 
   return (
@@ -112,7 +112,7 @@ export function SkillForm({ skill, isEditing = false }: SkillFormProps) {
               >
                 {categories.map((category) => (
                   <option key={category} value={category}>
-                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                    {category}
                   </option>
                 ))}
               </select>

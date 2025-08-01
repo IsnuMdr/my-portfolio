@@ -41,3 +41,42 @@ export async function POST(request: NextRequest) {
     );
   }
 }
+
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { id, name, category, level, description } = body;
+
+    const skill = await prisma.skill.update({
+      where: { id },
+      data: {
+        name,
+        category,
+        level,
+        description: description || null,
+      },
+    });
+
+    return NextResponse.json(skill);
+  } catch (error) {
+    console.error("Error updating skill:", error);
+    return NextResponse.json(
+      { error: "Failed to update skill" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { id } = await request.json();
+    await prisma.skill.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error deleting skill:", error);
+    return NextResponse.json(
+      { error: "Failed to delete skill" },
+      { status: 500 }
+    );
+  }
+}
