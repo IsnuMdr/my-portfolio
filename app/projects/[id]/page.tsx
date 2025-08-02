@@ -4,6 +4,7 @@ import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { getProjectById } from "@/lib/data/projects";
 import { Header } from "@/components/ui/Header";
 import { ProjectDetailContent } from "@/components/pages/ProjectDetailContent";
+import { dateFormat } from "@/lib/utils/dateFormat";
 
 export default async function ProjectDetailPage({
   params,
@@ -18,14 +19,7 @@ export default async function ProjectDetailPage({
     notFound();
   }
 
-  const completedAtFormatted = new Date(project.completedAt).toLocaleDateString(
-    "id-ID",
-    {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-    }
-  );
+  const completedAtFormatted = dateFormat(project.completedAt);
 
   return (
     <main className="min-h-screen bg-gradient-elegant">

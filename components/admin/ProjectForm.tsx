@@ -25,7 +25,7 @@ interface FormData {
   demoUrl?: string | null;
   featured: boolean;
   category: string;
-  completedAt: Date;
+  completedAt: string;
   duration: string;
   teamSize: number;
 }
@@ -44,7 +44,7 @@ export function ProjectForm({ project, isEditing = false }: ProjectFormProps) {
     demoUrl: "",
     featured: false,
     category: "fullstack",
-    completedAt: new Date(),
+    completedAt: "",
     duration: "",
     teamSize: 1,
   });
@@ -63,7 +63,7 @@ export function ProjectForm({ project, isEditing = false }: ProjectFormProps) {
         demoUrl: project.demoUrl,
         featured: project.featured,
         category: project.category,
-        completedAt: project.completedAt,
+        completedAt: project.completedAt.toISOString().split("T")[0],
         duration: project.duration,
         teamSize: project.teamSize || 1,
       });
@@ -85,6 +85,7 @@ export function ProjectForm({ project, isEditing = false }: ProjectFormProps) {
 
       const payload = {
         ...formData,
+        completedAt: new Date(formData.completedAt),
         technologies: formData.technologies
           .split(",")
           .map((tech) => tech.trim())
@@ -285,7 +286,7 @@ export function ProjectForm({ project, isEditing = false }: ProjectFormProps) {
               <input
                 type="date"
                 id="completedAt"
-                value={formData.completedAt.toISOString().split("T")[0]}
+                value={formData.completedAt}
                 onChange={(e) =>
                   handleInputChange("completedAt", e.target.value)
                 }

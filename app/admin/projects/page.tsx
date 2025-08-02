@@ -7,7 +7,7 @@ import Image from "next/image";
 
 async function getProjects() {
   return await prisma.project.findMany({
-    orderBy: { createdAt: "desc" },
+    orderBy: { completedAt: "desc" },
     include: {
       _count: {
         select: { images: true },
@@ -62,88 +62,99 @@ export default async function AdminProjects() {
                 </tr>
               </thead>
               <tbody>
-                {projects.map((project) => (
-                  <tr
-                    key={project.id}
-                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-3">
-                        <Image
-                          src={
-                            project.imageUrl || "/images/default-project.jpg"
-                          }
-                          width={52}
-                          height={52}
-                          alt={project.title}
-                          className="w-12 h-12 rounded-lg object-cover"
-                        />
-                        <div>
-                          <div className="font-semibold text-gray-900">
-                            {project.title}
-                          </div>
-                          <div className="text-gray-600 text-sm">
-                            {project.description.slice(0, 50)}...
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-4 px-6">
-                      <span className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm font-medium">
-                        {project.category}
-                      </span>
-                    </td>
-                    <td className="py-4 px-6">
-                      <div className="flex flex-wrap gap-1">
-                        {project.technologies.slice(0, 3).map((tech) => (
-                          <span
-                            key={tech}
-                            className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                        {project.technologies.length > 3 && (
-                          <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
-                            +{project.technologies.length - 3}
-                          </span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="py-4 px-6">
-                      {project.featured ? (
-                        <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
-                          Featured
-                        </span>
-                      ) : (
-                        <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
-                          Not Featured
-                        </span>
-                      )}
-                    </td>
-                    <td className="py-4 px-6">
-                      <div className="flex items-center gap-2">
-                        <Link
-                          href={`/projects/${project.id}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                          title="View Demo"
-                        >
-                          <ExternalLink size={16} />
-                        </Link>
-                        <Link
-                          href={`/admin/projects/${project.id}`}
-                          className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                          title="Edit"
-                        >
-                          <Edit size={16} />
-                        </Link>
-                        <DeleteProjectButton projectId={project.id} />
-                      </div>
+                {projects.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={5}
+                      className="py-4 px-6 text-center text-gray-600"
+                    >
+                      No projects found.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  projects.map((project) => (
+                    <tr
+                      key={project.id}
+                      className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="py-4 px-6">
+                        <div className="flex items-center gap-3">
+                          <Image
+                            src={
+                              project.imageUrl || "/images/default-project.jpg"
+                            }
+                            width={52}
+                            height={52}
+                            alt={project.title}
+                            className="w-12 h-12 rounded-lg object-cover"
+                          />
+                          <div>
+                            <div className="font-semibold text-gray-900">
+                              {project.title}
+                            </div>
+                            <div className="text-gray-600 text-sm">
+                              {project.description.slice(0, 50)}...
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6">
+                        <span className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm font-medium">
+                          {project.category}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6">
+                        <div className="flex flex-wrap gap-1">
+                          {project.technologies.slice(0, 3).map((tech) => (
+                            <span
+                              key={tech}
+                              className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                          {project.technologies.length > 3 && (
+                            <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">
+                              +{project.technologies.length - 3}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="py-4 px-6">
+                        {project.featured ? (
+                          <span className="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                            Featured
+                          </span>
+                        ) : (
+                          <span className="px-3 py-1 bg-red-100 text-red-700 rounded-full text-sm font-medium">
+                            Not Featured
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-4 px-6">
+                        <div className="flex items-center gap-2">
+                          <Link
+                            href={`/projects/${project.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                            title="View Demo"
+                          >
+                            <ExternalLink size={16} />
+                          </Link>
+                          <Link
+                            href={`/admin/projects/${project.id}`}
+                            className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                            title="Edit"
+                          >
+                            <Edit size={16} />
+                          </Link>
+                          <DeleteProjectButton projectId={project.id} />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>

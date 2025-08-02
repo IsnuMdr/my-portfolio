@@ -68,13 +68,13 @@ export function ImageUpload({
               </button>
             </div>
           </div>
-          <button
+          {/* <button
             type="button"
             onClick={removeImage}
             className="mt-2 text-sm text-red-600 hover:text-red-800"
           >
             Remove image
-          </button>
+          </button> */}
         </div>
       </div>
     );

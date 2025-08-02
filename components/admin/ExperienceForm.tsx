@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Experience } from "@prisma/client";
-import ImageUpload from "@/components/ui/ImageUpload";
+import { ImageUpload } from "@/components/ui/ImageUpload";
 
 interface ExperienceFormProps {
   experience?: Experience;
@@ -11,14 +11,15 @@ interface ExperienceFormProps {
 }
 
 interface FormData {
+  id?: string;
   company: string;
   position: string;
   description: string;
   startDate: string;
-  endDate: string;
+  endDate?: string | null;
   current: boolean;
-  location: string;
-  companyLogo: string;
+  location?: string | null;
+  companyLogo?: string | null;
 }
 
 export function ExperienceForm({
@@ -28,36 +29,50 @@ export function ExperienceForm({
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    company: experience?.company || "",
-    position: experience?.position || "",
-    description: experience?.description || "",
-    startDate: experience?.startDate ? experience.startDate : "",
-    endDate: experience?.endDate ? experience.endDate : "",
-    current: experience?.current || false,
-    location: experience?.location || "",
-    companyLogo: experience?.companyLogo || "",
+    company: "",
+    position: "",
+    description: "",
+    startDate: "",
+    endDate: null,
+    current: false,
+    location: null,
+    companyLogo: null,
   });
+
+  // Initialize form data when project data is available
+  useEffect(() => {
+    if (experience) {
+      setFormData({
+        company: experience.company,
+        position: experience.position,
+        description: experience.description,
+        startDate: experience.startDate.toISOString().split("T")[0],
+        endDate: experience.endDate?.toISOString().split("T")[0] || null,
+        current: experience.current || false,
+        location: experience?.location || null,
+        companyLogo: experience?.companyLogo || null,
+      });
+    }
+  }, [experience]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      if (isEditing) {
+        formData.id = experience?.id as string;
+      }
+
       const payload = {
         ...formData,
         startDate: new Date(formData.startDate),
-        endDate:
-          formData.current || !formData.endDate
-            ? null
-            : new Date(formData.endDate),
+        endDate: formData.endDate ? new Date(formData.endDate) : null,
       };
 
-      const url = isEditing
-        ? `/api/admin/experiences/${experience?.id}`
-        : "/api/admin/experiences";
       const method = isEditing ? "PUT" : "POST";
 
-      const response = await fetch(url, {
+      const response = await fetch("/api/experience", {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -102,7 +117,7 @@ export function ExperienceForm({
                 required
                 value={formData.company}
                 onChange={(e) => handleInputChange("company", e.target.value)}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
 
@@ -119,7 +134,7 @@ export function ExperienceForm({
                 required
                 value={formData.position}
                 onChange={(e) => handleInputChange("position", e.target.value)}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
 
@@ -138,7 +153,7 @@ export function ExperienceForm({
                 onChange={(e) =>
                   handleInputChange("description", e.target.value)
                 }
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Describe your role, responsibilities, and achievements..."
               />
             </div>
@@ -156,7 +171,7 @@ export function ExperienceForm({
                 required
                 value={formData.startDate}
                 onChange={(e) => handleInputChange("startDate", e.target.value)}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
 
@@ -171,9 +186,9 @@ export function ExperienceForm({
                 type="date"
                 id="endDate"
                 disabled={formData.current}
-                value={formData.endDate}
+                value={formData.endDate ? formData.endDate : ""}
                 onChange={(e) => handleInputChange("endDate", e.target.value)}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm disabled:bg-gray-100"
+                className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
 
@@ -190,7 +205,7 @@ export function ExperienceForm({
                         handleInputChange("endDate", "");
                       }
                     }}
-                    className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
+                    className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   />
                 </div>
                 <div className="ml-3 text-sm">
@@ -214,9 +229,9 @@ export function ExperienceForm({
               <input
                 type="text"
                 id="location"
-                value={formData.location}
+                value={formData.location || ""}
                 onChange={(e) => handleInputChange("location", e.target.value)}
-                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="City, Country"
               />
             </div>
@@ -226,9 +241,9 @@ export function ExperienceForm({
                 Company Logo
               </label>
               <ImageUpload
-                value={formData.companyLogo}
-                onChange={(url) => handleInputChange("companyLogo", url || "")}
-                className="w-20 h-20 object-contain"
+                value={formData.companyLogo || ""}
+                onChange={(url) => handleInputChange("companyLogo", url)}
+                // className="w-20 h-20 object-contain"
               />
             </div>
           </div>

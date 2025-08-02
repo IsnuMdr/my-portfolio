@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Trash2 } from "lucide-react";
 
 interface DeleteExperienceButtonProps {
   experienceId: string;
@@ -18,8 +19,9 @@ export function DeleteExperienceButton({
     setIsDeleting(true);
 
     try {
-      const response = await fetch(`/api/admin/experiences/${experienceId}`, {
+      const response = await fetch(`/api/admin/experiences`, {
         method: "DELETE",
+        body: JSON.stringify({ id: experienceId }),
       });
 
       if (!response.ok) {
@@ -61,7 +63,7 @@ export function DeleteExperienceButton({
       onClick={() => setShowConfirm(true)}
       className="text-red-600 hover:text-red-900 text-sm"
     >
-      Delete
+      <Trash2 size={16} />
     </button>
   );
 }
