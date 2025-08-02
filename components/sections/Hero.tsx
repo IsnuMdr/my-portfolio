@@ -142,12 +142,12 @@ export const Hero = () => {
             className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
           >
             <motion.button
-              onClick={() => handleScrollToSection("projects")}
+              onClick={() => handleScrollToSection("about")}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="btn-primary-elegant group"
             >
-              <span>Explore My Work</span>
+              <span>Learn More</span>
               <motion.div
                 className="inline-block ml-2"
                 animate={{ x: [0, 5, 0] }}
