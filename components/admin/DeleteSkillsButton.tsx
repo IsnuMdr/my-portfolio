@@ -17,7 +17,7 @@ export function DeleteSkillButton({ skillId }: DeleteSkillButtonProps) {
     setIsDeleting(true);
 
     try {
-      const response = await fetch(`/api/skills/`, {
+      const response = await fetch(`/api/skills`, {
         method: "DELETE",
         body: JSON.stringify({ id: skillId }),
       });

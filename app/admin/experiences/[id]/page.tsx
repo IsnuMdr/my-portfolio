@@ -2,10 +2,6 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { ExperienceForm } from "@/components/admin/ExperienceForm";
 
-interface EditExperiencePageProps {
-  params: { id: string };
-}
-
 async function getExperience(id: string) {
   const experience = await prisma.experience.findUnique({
     where: { id },
@@ -16,8 +12,11 @@ async function getExperience(id: string) {
 
 export default async function EditExperiencePage({
   params,
-}: EditExperiencePageProps) {
-  const experience = await getExperience(params.id);
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const id = (await params).id;
+  const experience = await getExperience(id);
 
   if (!experience) {
     notFound();

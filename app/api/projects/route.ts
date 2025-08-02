@@ -40,7 +40,6 @@ export async function POST(request: NextRequest) {
 
   try {
     const { images, ...projectData } = body;
-    console.log(body);
 
     const project = await prisma.project.create({
       data: {

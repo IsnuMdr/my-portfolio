@@ -3,10 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { ProjectForm } from "@/components/admin/ProjectForm";
 import { Project } from "@prisma/client";
 
-interface EditProjectPageProps {
-  params: { id: string };
-}
-
 async function getProject(
   id: string
 ): Promise<
@@ -24,8 +20,11 @@ async function getProject(
 
 export default async function EditProjectPage({
   params,
-}: EditProjectPageProps) {
-  const project = await getProject(params.id);
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const id = (await params).id;
+  const project = await getProject(id);
 
   if (!project) {
     notFound();

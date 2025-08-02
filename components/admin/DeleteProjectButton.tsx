@@ -1,8 +1,6 @@
-// components/admin/DeleteProjectButton.tsx
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Trash2, X } from "lucide-react";
 
 interface DeleteProjectButtonProps {
@@ -12,7 +10,6 @@ interface DeleteProjectButtonProps {
 export function DeleteProjectButton({ projectId }: DeleteProjectButtonProps) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-  const router = useRouter();
 
   const handleDelete = async () => {
     setIsDeleting(true);

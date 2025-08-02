@@ -1,15 +1,10 @@
-// app/api/admin/skills/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-interface RouteParams {
-  params: { id: string };
-}
-
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(request: NextRequest) {
   try {
-    const skill = await prisma.skill.findUnique({
-      where: { id: params.id },
+    const skill = await prisma.skill.findMany({
+      orderBy: [{ category: "asc" }, { name: "asc" }],
     });
 
     if (!skill) {
@@ -26,13 +21,13 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, category, level, description } = body;
+    const { id, name, category, level, description } = body;
 
     const skill = await prisma.skill.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         name,
         category,
@@ -51,10 +46,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(request: NextRequest) {
   try {
+    const body = await request.json();
     await prisma.skill.delete({
-      where: { id: params.id },
+      where: { id: body.id },
     });
 
     return NextResponse.json({ success: true });

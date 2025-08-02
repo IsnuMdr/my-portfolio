@@ -2,10 +2,6 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { SkillForm } from "@/components/admin/SkillForm";
 
-interface EditSkillPageProps {
-  params: { id: string };
-}
-
 async function getSkill(id: string) {
   const skill = await prisma.skill.findUnique({
     where: { id },
@@ -14,8 +10,13 @@ async function getSkill(id: string) {
   return skill;
 }
 
-export default async function EditSkillPage({ params }: EditSkillPageProps) {
-  const skill = await getSkill(params.id);
+export default async function EditSkillPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const id = (await params).id;
+  const skill = await getSkill(id);
 
   if (!skill) {
     notFound();
