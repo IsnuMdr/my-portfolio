@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Experience } from "@/types/experience";
 import { OptimizedImage } from "../ui/OptimizedImage";
+import { calculateDuration, dateFormat } from "@/lib/utils/dateFormat";
 
 export const Experiences = ({ experiences }: { experiences: Experience[] }) => {
   const [hoveredExperience, setHoveredExperience] = useState<string | null>(
@@ -29,36 +30,6 @@ export const Experiences = ({ experiences }: { experiences: Experience[] }) => {
       internship: "text-orange-600 bg-orange-100",
     };
     return colors[type as keyof typeof colors] || "text-gray-600 bg-gray-100";
-  };
-
-  const calculateDuration = (startDate: string, endDate?: string) => {
-    const start = new Date(startDate);
-    const end = endDate ? new Date(endDate) : new Date();
-
-    const months =
-      (end.getFullYear() - start.getFullYear()) * 12 +
-      (end.getMonth() - start.getMonth());
-
-    const years = Math.floor(months / 12);
-    const remainingMonths = months % 12;
-
-    if (years === 0) {
-      return `${remainingMonths} month${remainingMonths !== 1 ? "s" : ""}`;
-    } else if (remainingMonths === 0) {
-      return `${years} year${years !== 1 ? "s" : ""}`;
-    } else {
-      return `${years} year${years !== 1 ? "s" : ""} ${remainingMonths} month${
-        remainingMonths !== 1 ? "s" : ""
-      }`;
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-    });
   };
 
   return (
@@ -201,10 +172,10 @@ export const Experiences = ({ experiences }: { experiences: Experience[] }) => {
                         <div className="flex items-center justify-end gap-2 text-sm text-gray-600">
                           <Calendar size={16} />
                           <span>
-                            {formatDate(experience.startDate)} -{" "}
+                            {dateFormat(experience.startDate)} -{" "}
                             {experience.current
                               ? "Present"
-                              : formatDate(experience.endDate!)}
+                              : dateFormat(experience.endDate!)}
                           </span>
                         </div>
 

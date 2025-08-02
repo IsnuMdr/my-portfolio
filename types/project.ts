@@ -15,7 +15,7 @@ export interface Project {
   technologies: string[];
   featured: boolean;
   completedAt: Date;
-  slug: string;
+  slug?: string | null;
   challenge?: string | null;
   solution?: string | null;
   results: string[];

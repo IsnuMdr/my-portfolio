@@ -6,8 +6,8 @@ export interface Experience {
   position: string;
   description: string;
   achievements: string[];
-  startDate: string;
-  endDate?: string | null;
+  startDate: Date;
+  endDate?: Date | null;
   current: boolean;
   location?: string | null;
   companyUrl?: string | null;

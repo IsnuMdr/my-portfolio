@@ -7,7 +7,6 @@ async function main() {
   await prisma.project.createMany({
     data: [
       {
-        slug: "ecommerce-platform",
         title: "E-Commerce Platform",
         description:
           "A modern, full-stack e-commerce solution with seamless user experience",
@@ -56,7 +55,6 @@ async function main() {
         teamSize: 1,
       },
       {
-        slug: "ai-chat-interface",
         title: "AI Chat Interface",
         description:
           "Intelligent chatbot with natural language processing capabilities",
@@ -104,7 +102,6 @@ async function main() {
         teamSize: 2,
       },
       {
-        slug: "task-management-system",
         title: "Task Management System",
         description:
           "Collaborative project management tool with real-time updates",
@@ -152,7 +149,6 @@ async function main() {
         teamSize: 3,
       },
       {
-        slug: "weather-analytics-dashboard",
         title: "Weather Analytics Dashboard",
         description:
           "Data visualization dashboard for weather patterns and forecasts",
@@ -200,7 +196,6 @@ async function main() {
         teamSize: 1,
       },
       {
-        slug: "rest-api-server",
         title: "REST API Server",
         description: "Scalable REST API with authentication and rate limiting",
         longDescription:
@@ -248,7 +243,6 @@ async function main() {
         teamSize: 1,
       },
       {
-        slug: "mobile-banking-app",
         title: "Mobile Banking App",
         description:
           "Secure mobile banking application with biometric authentication",
