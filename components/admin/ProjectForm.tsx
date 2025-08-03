@@ -22,8 +22,8 @@ interface FormData {
   title: string;
   description: string;
   longDescription: string;
-  challenge: string[];
-  solution: string[];
+  challenge: string;
+  solution: string;
   results: string[];
   technologies: string;
   imageUrl?: string | null;
@@ -43,16 +43,12 @@ export function ProjectForm({ project, isEditing = false }: ProjectFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  // State untuk melacak gambar original
-  const [originalImages, setOriginalImages] = useState<string[]>([]);
-  const [originalImageUrl, setOriginalImageUrl] = useState<string | null>(null);
-
   const [formData, setFormData] = useState<FormData>({
     title: "",
     description: "",
     longDescription: "",
-    challenge: [""],
-    solution: [""],
+    challenge: "",
+    solution: "",
     results: [""],
     technologies: "",
     imageUrl: "",
@@ -71,18 +67,16 @@ export function ProjectForm({ project, isEditing = false }: ProjectFormProps) {
   // Initialize form data when project data is available
   useEffect(() => {
     if (project) {
-      const projectImages = project.images.map((img) => img.imageUrl) || [];
-
       setFormData({
         title: project.title,
         description: project.description,
         longDescription: project.longDescription,
-        challenge: project.challenge ? project.challenge : [],
-        solution: project.solution ? project.solution : [],
+        challenge: project.challenge ? project.challenge : "",
+        solution: project.solution ? project.solution : "",
         results: project.results ? project.results : [],
         technologies: project.technologies.join(", "),
         imageUrl: project.imageUrl,
-        images: projectImages,
+        images: project.images.map((image) => image.imageUrl),
         githubUrl: project.githubUrl,
         demoUrl: project.demoUrl,
         featured: project.featured,
@@ -93,18 +87,8 @@ export function ProjectForm({ project, isEditing = false }: ProjectFormProps) {
         role: project.role,
         teamSize: project.teamSize || 1,
       });
-
-      // Simpan gambar original untuk perbandingan
-      setOriginalImages(projectImages);
-      setOriginalImageUrl(project.imageUrl);
     }
   }, [project]);
-
-  // Fungsi untuk membandingkan array gambar
-  const arraysEqual = (a: string[], b: string[]) => {
-    if (a.length !== b.length) return false;
-    return a.every((val, index) => val === b[index]);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,40 +99,15 @@ export function ProjectForm({ project, isEditing = false }: ProjectFormProps) {
         formData.id = project?.id as string;
       }
 
-      // Hanya kirim data gambar jika ada perubahan
-      let imagesData = undefined;
-      let shouldUpdateMainImage = false;
-
-      // Cek apakah ada perubahan pada detail images
-      if (!isEditing || !arraysEqual(formData.images, originalImages)) {
-        imagesData = formData.images.map((imageUrl) => ({
-          imageUrl,
-        }));
-      }
-
-      // Cek apakah ada perubahan pada main image
-      if (!isEditing || formData.imageUrl !== originalImageUrl) {
-        shouldUpdateMainImage = true;
-      }
-
-      const payload: any = {
+      const payload = {
         ...formData,
         completedAt: new Date(formData.completedAt),
         technologies: formData.technologies
           .split(",")
           .map((tech) => tech.trim())
           .filter(Boolean),
+        images: formData.images.map((image) => ({ imageUrl: image })),
       };
-
-      // Hanya tambahkan images jika ada perubahan
-      if (imagesData !== undefined) {
-        payload.images = imagesData;
-      }
-
-      // Hanya tambahkan imageUrl jika ada perubahan atau ini adalah create baru
-      if (shouldUpdateMainImage) {
-        payload.imageUrl = formData.imageUrl;
-      }
 
       const method = isEditing ? "PUT" : "POST";
 
@@ -461,6 +420,46 @@ export function ProjectForm({ project, isEditing = false }: ProjectFormProps) {
               </div>
             </div>
 
+            {/* Challenge */}
+            <div className="sm:col-span-6">
+              <label
+                htmlFor="challenge"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Challenges
+              </label>
+              <textarea
+                id="challenge"
+                required
+                rows={6}
+                value={formData.challenge}
+                onChange={(e) => handleInputChange("challenge", e.target.value)}
+                className="mt-1 textarea-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Detailed project description, features, challenges overcome, etc."
+                autoComplete="challenge"
+              />
+            </div>
+
+            {/* Solution */}
+            <div className="sm:col-span-6">
+              <label
+                htmlFor="solution"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Solutions
+              </label>
+              <textarea
+                id="solution"
+                required
+                rows={6}
+                value={formData.solution}
+                onChange={(e) => handleInputChange("solution", e.target.value)}
+                className="mt-1 textarea-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Detailed project description, features, solutions overcome, etc."
+                autoComplete="solution"
+              />
+            </div>
+
             {/* Features */}
             <div className="sm:col-span-6">
               <label
@@ -498,86 +497,6 @@ export function ProjectForm({ project, isEditing = false }: ProjectFormProps) {
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Add Feature
-              </button>
-            </div>
-
-            {/* Challenge */}
-            <div className="sm:col-span-6">
-              <label
-                htmlFor="challenge"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Challenges
-              </label>
-              {formData.challenge.map((challenge, index) => (
-                <div key={index} className="flex items-center mb-2">
-                  <input
-                    type="text"
-                    value={challenge}
-                    onChange={(e) =>
-                      handleArrayInputChange("challenge", index, e.target.value)
-                    }
-                    className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder={`Challenge ${index + 1}`}
-                  />
-                  {formData.challenge.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeArrayItem("challenge", index)}
-                      className="ml-2 text-red-500 hover:text-red-700"
-                    >
-                      <CircleMinus className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-              ))}
-              <button
-                type="button"
-                onClick={() => addArrayItem("challenge")}
-                className="flex items-center mt-2 text-sm bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 "
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Challenge
-              </button>
-            </div>
-
-            {/* Solution */}
-            <div className="sm:col-span-6">
-              <label
-                htmlFor="solution"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Solutions
-              </label>
-              {formData.solution.map((solution, index) => (
-                <div key={index} className="flex items-center mb-2">
-                  <input
-                    type="text"
-                    value={solution}
-                    onChange={(e) =>
-                      handleArrayInputChange("solution", index, e.target.value)
-                    }
-                    className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder={`Solution ${index + 1}`}
-                  />
-                  {formData.solution.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeArrayItem("solution", index)}
-                      className="ml-2 text-red-500 hover:text-red-700"
-                    >
-                      <CircleMinus className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-              ))}
-              <button
-                type="button"
-                onClick={() => addArrayItem("solution")}
-                className="flex items-center mt-2 text-sm bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 "
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Add Solution
               </button>
             </div>
 

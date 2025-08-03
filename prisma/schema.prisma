@@ -12,8 +12,8 @@ model Project {
   title           String
   description     String
   longDescription String
-  challenge       String[]
-  solution        String[]
+  challenge       String?
+  solution        String?
   results         String[]
   imageUrl        String?
   images          ProjectImage[]

@@ -433,16 +433,9 @@ export const ProjectDetailContent = ({
                       The Challenge
                     </h3>
                   </div>
-                  {project.challenge && (
-                    <ul className="list-disc list-inside text-gray-600 leading-relaxed text-lg">
-                      {project.challenge.map((item, index) => (
-                        <li key={index}>{item}</li>
-                      ))}
-                    </ul>
-                  )}
-                  {/* <p className="text-gray-600 leading-relaxed text-lg">
+                  <p className="text-gray-600 leading-relaxed text-lg">
                     {project.challenge}
-                  </p> */}
+                  </p>
                 </div>
               </AnimatedSection>
 
@@ -458,13 +451,9 @@ export const ProjectDetailContent = ({
                       The Solution
                     </h3>
                   </div>
-                  {project.solution && (
-                    <ul className="list-disc list-inside text-gray-600 leading-relaxed text-lg">
-                      {project.solution.map((item, index) => (
-                        <li key={index}>{item}</li>
-                      ))}
-                    </ul>
-                  )}
+                  <p className="text-gray-600 leading-relaxed text-lg">
+                    {project.solution}
+                  </p>
                 </div>
               </AnimatedSection>
             </div>

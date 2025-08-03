@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "projects" ALTER COLUMN "challenge" DROP NOT NULL,
+ALTER COLUMN "challenge" SET DATA TYPE TEXT,
+ALTER COLUMN "solution" DROP NOT NULL,
+ALTER COLUMN "solution" SET DATA TYPE TEXT;
