@@ -16,8 +16,8 @@ export interface Project {
   featured: boolean;
   completedAt: Date;
   slug?: string | null;
-  challenge?: string | null;
-  solution?: string | null;
+  challenge?: string[];
+  solution?: string[];
   results: string[];
   images: ProjectImage[] | ProjectImageData[];
   features: string[];

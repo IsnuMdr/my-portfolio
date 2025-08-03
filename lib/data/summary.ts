@@ -1,10 +1,7 @@
+import { Summary } from "@/types/summary";
 import { prisma } from "../prisma";
 
-export async function getSummary(): Promise<{
-  skills: number;
-  projects: number;
-  experiences: number;
-}> {
+export async function getSummary(): Promise<Summary> {
   try {
     const [skillsCount, projectsCount, experiencesCount, contactCount] =
       await Promise.all([

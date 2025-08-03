@@ -18,7 +18,7 @@ import {
 import { redirect, usePathname } from "next/navigation";
 
 export const Header = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
 

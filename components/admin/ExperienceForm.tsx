@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Experience } from "@prisma/client";
+import { Experience, ExperienceType } from "@prisma/client";
 import { ImageUpload } from "@/components/ui/ImageUpload";
 
 interface ExperienceFormProps {
@@ -20,6 +20,9 @@ interface FormData {
   current: boolean;
   location?: string | null;
   companyLogo?: string | null;
+  companyUrl?: string | null;
+  technologies: string[];
+  type: ExperienceType;
 }
 
 export function ExperienceForm({
@@ -37,6 +40,9 @@ export function ExperienceForm({
     current: false,
     location: null,
     companyLogo: null,
+    companyUrl: null,
+    technologies: [],
+    type: "fullTime",
   });
 
   // Initialize form data when project data is available
@@ -51,6 +57,9 @@ export function ExperienceForm({
         current: experience.current || false,
         location: experience?.location || null,
         companyLogo: experience?.companyLogo || null,
+        companyUrl: experience?.companyUrl || null,
+        technologies: experience.technologies,
+        type: experience.type,
       });
     }
   }, [experience]);
@@ -98,6 +107,14 @@ export function ExperienceForm({
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
+
+  const experienceTypes = [
+    { value: "fullTime", label: "Full Time" },
+    { value: "partTime", label: "Part Time" },
+    { value: "contract", label: "Contract" },
+    { value: "internship", label: "Internship" },
+    { value: "volunteer", label: "Volunteer" },
+  ];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
@@ -155,6 +172,46 @@ export function ExperienceForm({
                 }
                 className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Describe your role, responsibilities, and achievements..."
+              />
+            </div>
+
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="type"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Type *
+              </label>
+              <select
+                id="type"
+                required
+                value={formData.type}
+                onChange={(e) => handleInputChange("type", e.target.value)}
+                className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              >
+                {experienceTypes.map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="companyUrl"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Company URL (Optional)
+              </label>
+              <input
+                id="companyUrl"
+                type="url"
+                value={formData.companyUrl || ""}
+                onChange={(e) =>
+                  handleInputChange("companyUrl", e.target.value)
+                }
+                className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
 
@@ -233,6 +290,25 @@ export function ExperienceForm({
                 onChange={(e) => handleInputChange("location", e.target.value)}
                 className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="City, Country"
+              />
+            </div>
+
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="technologies"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Technologies used (comma-separated)
+              </label>
+              <input
+                type="text"
+                id="technologies"
+                value={formData.technologies}
+                onChange={(e) =>
+                  handleInputChange("technologies", e.target.value)
+                }
+                className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="React, Node.js, MongoDB, etc."
               />
             </div>
 

@@ -13,8 +13,17 @@ import {
   Mail,
 } from "lucide-react";
 import { OptimizedImage } from "../ui/OptimizedImage";
+import { Experience } from "@/types/experience";
+import { dateFormat } from "@/lib/utils/dateFormat";
+import { Summary } from "@/types/summary";
 
-export const About = () => {
+export const About = ({
+  experience,
+  summary,
+}: {
+  experience: Experience[];
+  summary: Summary;
+}) => {
   const [activeTab, setActiveTab] = useState("story");
 
   const tabs = [
@@ -33,7 +42,7 @@ export const About = () => {
     {
       icon: User,
       label: "Years Experience",
-      value: "3+",
+      value: summary.experiences,
       color: "text-green-600",
     },
     {
@@ -47,41 +56,6 @@ export const About = () => {
       label: "Cups of Coffee",
       value: "1000+",
       color: "text-amber-600",
-    },
-  ];
-
-  const timeline = [
-    {
-      year: "2024",
-      title: "Senior Full Stack Developer",
-      company: "Tech Innovations Inc.",
-      description:
-        "Leading development team, architecting scalable solutions, and mentoring junior developers.",
-      current: true,
-    },
-    {
-      year: "2023",
-      title: "Full Stack Developer",
-      company: "Digital Solutions Ltd.",
-      description:
-        "Built multiple client projects using modern web technologies and improved team productivity.",
-      current: false,
-    },
-    {
-      year: "2022",
-      title: "Frontend Developer",
-      company: "StartupXYZ",
-      description:
-        "Specialized in React development and created responsive, user-friendly interfaces.",
-      current: false,
-    },
-    {
-      year: "2021",
-      title: "Started Coding Journey",
-      company: "Self-Taught",
-      description:
-        "Began learning programming through online courses and building personal projects.",
-      current: false,
     },
   ];
 
@@ -141,50 +115,56 @@ export const About = () => {
             transition={{ duration: 0.6 }}
             className="space-y-8"
           >
-            {timeline.map((item, index) => (
-              <motion.div
-                key={item.year}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.6 }}
-                className="flex gap-6 group"
-              >
-                <div className="flex flex-col items-center">
-                  <motion.div
-                    whileHover={{ scale: 1.2 }}
-                    className={`w-4 h-4 rounded-full border-4 ${
-                      item.current
-                        ? "bg-primary-600 border-primary-200"
-                        : "bg-white border-gray-300"
-                    }`}
-                  />
-                  {index !== timeline.length - 1 && (
-                    <div className="w-0.5 h-16 bg-gray-200 mt-2" />
-                  )}
-                </div>
-                <div className="flex-1 pb-8">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-sm font-bold text-primary-600 bg-primary-100 px-2 py-1 rounded">
-                      {item.year}
-                    </span>
-                    {item.current && (
-                      <span className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded-full">
-                        Current
-                      </span>
+            {experience.length === 0 ? (
+              <p className="text-lg text-gray-600 leading-relaxed">
+                No experience yet.
+              </p>
+            ) : (
+              experience.map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1, duration: 0.6 }}
+                  className="flex gap-6 group"
+                >
+                  <div className="flex flex-col items-center">
+                    <motion.div
+                      whileHover={{ scale: 1.2 }}
+                      className={`w-4 h-4 rounded-full border-4 ${
+                        item.current
+                          ? "bg-primary-600 border-primary-200"
+                          : "bg-white border-gray-300"
+                      }`}
+                    />
+                    {index !== experience.length - 1 && (
+                      <div className="w-0.5 h-16 bg-gray-200 mt-2" />
                     )}
                   </div>
-                  <h4 className="font-bold text-gray-900 mb-1 group-hover:text-primary-600 transition-colors">
-                    {item.title}
-                  </h4>
-                  <p className="text-gray-600 font-medium mb-2">
-                    {item.company}
-                  </p>
-                  <p className="text-gray-600 leading-relaxed">
-                    {item.description}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
+                  <div className="flex-1 pb-8">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-sm font-bold text-primary-600 bg-primary-100 px-2 py-1 rounded">
+                        {dateFormat(item.startDate)}
+                      </span>
+                      {item.current && (
+                        <span className="text-xs font-medium text-green-600 bg-green-100 px-2 py-1 rounded-full">
+                          Current
+                        </span>
+                      )}
+                    </div>
+                    <h4 className="font-bold text-gray-900 mb-1 group-hover:text-primary-600 transition-colors">
+                      {item.position}
+                    </h4>
+                    <p className="text-gray-600 font-medium mb-2">
+                      {item.company}
+                    </p>
+                    <p className="text-gray-600 leading-relaxed">
+                      {item.description}
+                    </p>
+                  </div>
+                </motion.div>
+              ))
+            )}
           </motion.div>
         );
 

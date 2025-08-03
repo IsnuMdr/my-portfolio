@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Skill } from "@prisma/client";
 
@@ -14,18 +14,33 @@ interface FormData {
   name: string;
   category: string;
   level: number;
-  description: string;
+  description?: string | null;
+  experience?: string | null;
 }
 
 export function SkillForm({ skill, isEditing = false }: SkillFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<FormData>({
-    name: skill?.name || "",
-    category: skill?.category || "fullstack",
-    level: skill?.level || 70,
-    description: skill?.description || "",
+    name: "",
+    category: "Fullstack",
+    level: 70,
+    description: "",
+    experience: "",
   });
+
+  useEffect(() => {
+    if (skill) {
+      setFormData({
+        id: skill.id,
+        name: skill.name,
+        category: skill.category,
+        level: skill.level,
+        description: skill.description,
+        experience: skill.experience,
+      });
+    }
+  }, [skill]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,7 +92,7 @@ export function SkillForm({ skill, isEditing = false }: SkillFormProps) {
       <div className="bg-white shadow rounded-lg">
         <div className="px-4 py-5 sm:p-6">
           <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-3">
               <label
                 htmlFor="name"
                 className="block text-sm font-medium text-gray-700"
@@ -96,7 +111,7 @@ export function SkillForm({ skill, isEditing = false }: SkillFormProps) {
               />
             </div>
 
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-3">
               <label
                 htmlFor="category"
                 className="block text-sm font-medium text-gray-700"
@@ -118,7 +133,7 @@ export function SkillForm({ skill, isEditing = false }: SkillFormProps) {
               </select>
             </div>
 
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-3">
               <label
                 htmlFor="level"
                 className="block text-sm font-medium text-gray-700"
@@ -136,6 +151,25 @@ export function SkillForm({ skill, isEditing = false }: SkillFormProps) {
                 className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
               />
             </div>
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="experience"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Experience
+              </label>
+              <input
+                type="text"
+                id="experience"
+                required
+                value={formData.experience || ""}
+                onChange={(e) =>
+                  handleInputChange("experience", parseInt(e.target.value))
+                }
+                className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                placeholder="Years of experience with this skill..."
+              />
+            </div>
 
             <div className="sm:col-span-6">
               <label
@@ -147,7 +181,7 @@ export function SkillForm({ skill, isEditing = false }: SkillFormProps) {
               <textarea
                 id="description"
                 rows={3}
-                value={formData.description}
+                value={formData.description || ""}
                 onChange={(e) =>
                   handleInputChange("description", e.target.value)
                 }

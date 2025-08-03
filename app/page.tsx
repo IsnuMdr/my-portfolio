@@ -10,6 +10,7 @@ import { Experiences } from "@/components/sections/Experiences";
 import { getAllExperience, getAllProjects, getAllSkills } from "@/lib/data";
 import { LazySection } from "@/components/ui/LazySection";
 import { Suspense } from "react";
+import { getSummary } from "@/lib/data/summary";
 
 const SectionSkeleton = () => (
   <div className="py-20">
@@ -31,12 +32,13 @@ export default async function Home() {
   const projects = await getAllProjects();
   const skills = await getAllSkills();
   const experience = await getAllExperience();
+  const summary = await getSummary();
 
   return (
     <main className="min-h-screen bg-gradient-elegant container">
       <Header />
       <Hero />
-      <About />
+      <About experience={experience} summary={summary} />
 
       <LazySection fallback={<SectionSkeleton />} rootMargin="200px">
         <Suspense fallback={<SectionSkeleton />}>
@@ -46,7 +48,7 @@ export default async function Home() {
 
       <LazySection fallback={<SectionSkeleton />} rootMargin="200px">
         <Suspense fallback={<SectionSkeleton />}>
-          <Experiences experiences={experience} />
+          <Experiences experiences={experience} summary={summary} />
         </Suspense>
       </LazySection>
 

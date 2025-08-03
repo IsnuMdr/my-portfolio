@@ -16,11 +16,45 @@ import {
 import { Experience } from "@/types/experience";
 import { OptimizedImage } from "../ui/OptimizedImage";
 import { calculateDuration, dateFormat } from "@/lib/utils/dateFormat";
+import { Summary } from "@/types/summary";
 
-export const Experiences = ({ experiences }: { experiences: Experience[] }) => {
+export const Experiences = ({
+  experiences,
+  summary,
+}: {
+  experiences: Experience[];
+  summary: Summary;
+}) => {
   const [hoveredExperience, setHoveredExperience] = useState<string | null>(
     null
   );
+
+  const stats = [
+    {
+      icon: Briefcase,
+      label: "Companies",
+      value: new Set(experiences.map((exp) => exp.company)).size,
+      color: "text-blue-600 bg-blue-100",
+    },
+    {
+      icon: Calendar,
+      label: "Years Experience",
+      value: summary.experiences,
+      color: "text-green-600 bg-green-100",
+    },
+    {
+      icon: TrendingUp,
+      label: "Projects Delivered",
+      value: summary.projects,
+      color: "text-purple-600 bg-purple-100",
+    },
+    {
+      icon: Code,
+      label: "Skills",
+      value: summary.skills,
+      color: "text-orange-600 bg-orange-100",
+    },
+  ];
 
   const getTypeColor = (type: string) => {
     const colors = {
@@ -180,14 +214,12 @@ export const Experiences = ({ experiences }: { experiences: Experience[] }) => {
                         </div>
 
                         <div className="text-xs text-gray-500">
-                          {experience.endDate && (
-                            <span>
-                              {calculateDuration(
-                                experience.startDate,
-                                experience.endDate
-                              )}
-                            </span>
-                          )}
+                          <span>
+                            {calculateDuration(
+                              experience.startDate,
+                              experience.endDate || new Date()
+                            )}
+                          </span>
                         </div>
 
                         {experience.location && (
@@ -281,32 +313,7 @@ export const Experiences = ({ experiences }: { experiences: Experience[] }) => {
         {/* Summary Stats */}
         <AnimatedSection delay={0.5}>
           <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              {
-                icon: Briefcase,
-                label: "Companies",
-                value: new Set(experiences.map((exp) => exp.company)).size,
-                color: "text-blue-600 bg-blue-100",
-              },
-              {
-                icon: Calendar,
-                label: "Years Experience",
-                value: "3+",
-                color: "text-green-600 bg-green-100",
-              },
-              {
-                icon: TrendingUp,
-                label: "Projects Delivered",
-                value: "25+",
-                color: "text-purple-600 bg-purple-100",
-              },
-              {
-                icon: Users,
-                label: "Team Members",
-                value: "15+",
-                color: "text-orange-600 bg-orange-100",
-              },
-            ].map((stat, index) => {
+            {stats.map((stat, index) => {
               const IconComponent = stat.icon;
               return (
                 <motion.div

@@ -10,7 +10,7 @@ async function getProjects() {
     orderBy: { completedAt: "desc" },
     include: {
       _count: {
-        select: { images: true },
+        select: { images: true, testimonial: true },
       },
     },
   });
