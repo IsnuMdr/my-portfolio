@@ -13,31 +13,36 @@ import {
   Phone,
 } from "lucide-react";
 import { TechIcons } from "./TechIcons";
+import { About } from "@/types/about";
 
-export const Footer = () => {
+export const Footer = ({ about }: { about: About | null }) => {
   const currentYear = new Date().getFullYear();
 
   const socialLinks = [
     {
       icon: Github,
-      href: "https://github.com/IsnuMdr",
+      href: about?.github || "https://github.com/IsnuMdr",
       label: "GitHub",
       color: "hover:text-gray-900 hover:bg-gray-100",
-      username: "@IsnuMdr",
+      username: `@${about?.github?.split("/")[3]}` || "@IsnuMdr",
     },
     {
       icon: Linkedin,
-      href: "https://www.linkedin.com/in/muhammad-isnu-munandar-b256961b3/",
+      href:
+        about?.linkedin ||
+        "https://www.linkedin.com/in/muhammad-isnu-munandar-b256961b3/",
       label: "LinkedIn",
       color: "hover:text-blue-600 hover:bg-blue-50",
-      username: "/in/muhammad-isnu-munandar-b256961b3",
+      username:
+        about?.linkedin?.split("/")[3] ||
+        "/in/muhammad-isnu-munandar-b256961b3",
     },
     {
       icon: Mail,
-      href: "mailto:isnu.mdr@gmail.com",
+      href: `mailto:${about?.email}` || "mailto:isnu.mdr@gmail.com",
       label: "Email",
       color: "hover:text-red-500 hover:bg-red-50",
-      username: "isnu.mdr@gmail.com",
+      username: about?.email || "isnu.mdr@gmail.com",
     },
   ];
 
@@ -135,10 +140,10 @@ export const Footer = () => {
                   </motion.div>
                   <div>
                     <div className="text-2xl font-bold bg-gradient-to-r from-primary-400 to-accent-400 bg-clip-text text-transparent">
-                      Isnu Munandar
+                      {about?.name || "Isnu Munandar"}
                     </div>
                     <div className="text-gray-400 text-sm">
-                      Software Engineer
+                      {about?.title || "Software Engineer"}
                     </div>
                   </div>
                 </div>
@@ -154,25 +159,40 @@ export const Footer = () => {
                 <div className="space-y-3 mb-6">
                   <div className="flex items-center gap-3 text-gray-300">
                     <MapPin size={16} className="text-primary-400" />
-                    <span className="text-sm">South Jakarta, Indonesia</span>
+                    <span className="text-sm">
+                      {about?.location || "South Jakarta, Indonesia"}
+                    </span>
                   </div>
                   <div className="flex items-center gap-3 text-gray-300">
                     <Phone size={16} className="text-primary-400" />
-                    <span className="text-sm">+62 823-2613-9613</span>
+                    <span className="text-sm">
+                      {about?.phone || "+62 823-2613-9613"}
+                    </span>
                   </div>
                   <div className="flex items-center gap-3 text-gray-300">
                     <Mail size={16} className="text-primary-400" />
-                    <span className="text-sm">isnu.mdr@gmail.com</span>
+                    <span className="text-sm">
+                      {about?.email || "isnu.mdr@gmail.com"}
+                    </span>
                   </div>
                 </div>
 
                 {/* Availability Status */}
-                <div className="flex items-center gap-3 p-3 bg-green-500/10 border border-green-500/20 rounded-xl">
-                  <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-                  <span className="text-green-400 font-medium text-sm">
-                    Available for new opportunities
-                  </span>
-                </div>
+                {about?.status === "available" ? (
+                  <div className="flex items-center gap-3 p-3 bg-green-500/10 border border-green-500/20 rounded-xl">
+                    <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                    <span className="text-green-400 font-medium text-sm">
+                      Available for new opportunities
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3 p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
+                    <div className="w-3 h-3 bg-red-400 rounded-full animate-pulse"></div>
+                    <span className="text-red-400 font-medium text-sm">
+                      Currently unavailable
+                    </span>
+                  </div>
+                )}
               </motion.div>
             </div>
 

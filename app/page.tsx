@@ -7,7 +7,12 @@ import { Contact } from "@/components/sections/Contact";
 import { ScrollToTop } from "@/components/ui/ScrollToTop";
 import { Footer } from "@/components/ui/Footer";
 import { Experiences } from "@/components/sections/Experiences";
-import { getAllExperience, getAllProjects, getAllSkills } from "@/lib/data";
+import {
+  getAbout,
+  getAllExperience,
+  getAllProjects,
+  getAllSkills,
+} from "@/lib/data";
 import { LazySection } from "@/components/ui/LazySection";
 import { Suspense } from "react";
 import { getSummary } from "@/lib/data/summary";
@@ -33,12 +38,13 @@ export default async function Home() {
   const skills = await getAllSkills();
   const experience = await getAllExperience();
   const summary = await getSummary();
+  const about = await getAbout();
 
   return (
     <main className="min-h-screen bg-gradient-elegant container">
-      <Header />
-      <Hero />
-      <About experience={experience} summary={summary} />
+      <Header about={about} />
+      <Hero about={about} />
+      <About about={about} experience={experience} summary={summary} />
 
       <LazySection fallback={<SectionSkeleton />} rootMargin="200px">
         <Suspense fallback={<SectionSkeleton />}>
@@ -58,8 +64,8 @@ export default async function Home() {
         </Suspense>
       </LazySection>
 
-      <Contact />
-      <Footer />
+      <Contact about={about} />
+      <Footer about={about} />
       <ScrollToTop />
     </main>
   );

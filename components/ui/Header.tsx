@@ -16,8 +16,9 @@ import {
   Bookmark,
 } from "lucide-react";
 import { redirect, usePathname } from "next/navigation";
+import { About } from "@/types/about";
 
-export const Header = () => {
+export const Header = ({ about }: { about: About | null }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
@@ -34,13 +35,23 @@ export const Header = () => {
   ];
 
   const socialLinks = [
-    { icon: Github, href: "https://github.com/IsnuMdr", label: "GitHub" },
+    {
+      icon: Github,
+      href: about?.github || "https://github.com/IsnuMdr",
+      label: "GitHub",
+    },
     {
       icon: Linkedin,
-      href: "https://www.linkedin.com/in/muhammad-isnu-munandar-b256961b3/",
+      href:
+        about?.linkedin ||
+        "https://www.linkedin.com/in/muhammad-isnu-munandar-b256961b3/",
       label: "LinkedIn",
     },
-    { icon: Mail, href: "mailto:isnu.mdr@gmail.com", label: "Email" },
+    {
+      icon: Mail,
+      href: `mailto:${about?.email}` || "mailto:isnu.mdr@gmail.com",
+      label: "Email",
+    },
   ];
 
   // Improved active section detection
@@ -198,10 +209,10 @@ export const Header = () => {
 
               <div className="hidden sm:block">
                 <div className="text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
-                  Isnu Munandar
+                  {about?.name || "Muhammad Isnu Munandar"}
                 </div>
                 <div className="text-xs text-gray-500 font-medium group-hover:text-primary-600 transition-colors duration-300">
-                  Software Engineer
+                  {about?.title || "Software Engineer"}
                 </div>
               </div>
             </motion.button>
@@ -256,7 +267,7 @@ export const Header = () => {
             {/* CTA Button - Desktop */}
             <div className="hidden lg:flex items-center gap-4">
               <motion.a
-                href="/resume.pdf"
+                href={about?.resume || "#"}
                 download
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.95 }}
@@ -362,7 +373,7 @@ export const Header = () => {
                 >
                   {/* Resume Download */}
                   <a
-                    href="/resume.pdf"
+                    href={about?.resume || "#"}
                     download
                     className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors duration-300"
                   >

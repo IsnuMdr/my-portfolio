@@ -7,6 +7,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model About {
+  id       String   @id @default(cuid())
+  name     String
+  title    String
+  headline String?
+  tagline  String?
+  summary  String?
+  imageUrl String?
+  personal String[]
+  location String?
+  email    String?
+  phone    String?
+  linkedin String?
+  github   String?
+  resume   String?
+  status   String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("abouts")
+}
+
 model Project {
   id              String               @id @default(cuid())
   title           String

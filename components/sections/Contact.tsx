@@ -10,8 +10,9 @@ import {
   Calendar,
   ExternalLink,
 } from "lucide-react";
+import { About } from "@/types/about";
 
-export const Contact = () => {
+export const Contact = ({ about }: { about: About | null }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -55,8 +56,8 @@ export const Contact = () => {
     {
       icon: Mail,
       label: "Email",
-      value: "isnu.mdr@gmail.com",
-      href: "mailto:isnu.mdr@gmail.com",
+      value: about?.email || "isnu.mdr@gmail.com",
+      href: `mailto:${about?.email}` || "mailto:isnu.mdr@gmail.com",
       description: "Send me an email anytime",
       color: "text-blue-600",
       bgColor: "bg-blue-50",
@@ -64,8 +65,8 @@ export const Contact = () => {
     {
       icon: Phone,
       label: "Phone",
-      value: "+62 812-3456-7890",
-      href: "tel:+6281234567890",
+      value: about?.phone || "+62 812-3456-7890",
+      href: `wa.me/${about?.phone}` || "wa.me/+6281234567890",
       description: "Available Mon-Fri, 9AM-6PM",
       color: "text-green-600",
       bgColor: "bg-green-50",
@@ -73,7 +74,7 @@ export const Contact = () => {
     {
       icon: MapPin,
       label: "Location",
-      value: "South Jakarta, ID",
+      value: about?.location || "South Jakarta, ID",
       href: "https://maps.google.com",
       description: "Open to remote work",
       color: "text-purple-600",

@@ -1,4 +1,3 @@
-// app/admin/layout.tsx
 import { Metadata } from "next";
 import Link from "next/link";
 import { ReactNode } from "react";
@@ -12,52 +11,56 @@ interface AdminLayoutProps {
   children: ReactNode;
 }
 
+function AdminNavLink({ href, label }: { href: string; label: string }) {
+  return (
+    <Link
+      href={href}
+      className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm"
+    >
+      {label}
+    </Link>
+  );
+}
+
 export default function AdminLayout({ children }: AdminLayoutProps) {
+  const navigations = [
+    { href: "/admin/projects", label: "Projects" },
+    { href: "/admin/skills", label: "Skills" },
+    { href: "/admin/experiences", label: "Experiences" },
+    { href: "/admin/about", label: "About" },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container-elegant">
           <div className="flex justify-between h-16">
-            <div className="flex">
+            <div className="flex items-center">
               <Link
                 href="/admin"
                 className="flex items-center px-4 text-lg font-semibold text-gray-900"
               >
                 Admin Panel
               </Link>
-              <div className="hidden sm:ml-6 sm:flex sm:space-x-8 items-center">
-                <Link
-                  href="/admin/projects"
-                  className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm"
-                >
-                  Projects
-                </Link>
-                <Link
-                  href="/admin/skills"
-                  className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm"
-                >
-                  Skills
-                </Link>
-                <Link
-                  href="/admin/experiences"
-                  className="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm"
-                >
-                  Experiences
-                </Link>
+              <div className="hidden sm:flex sm:ml-6 sm:space-x-8">
+                {navigations.map((nav) => (
+                  <AdminNavLink
+                    key={nav.href}
+                    href={nav.href}
+                    label={nav.label}
+                  />
+                ))}
               </div>
             </div>
             <div className="flex items-center">
-              <Link
-                href="/"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-              >
+              <Link href="/" className="btn-primary-elegant">
                 View Site
               </Link>
             </div>
           </div>
         </div>
       </nav>
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">{children}</main>
+      <main className="container-elegant py-6">{children}</main>
     </div>
   );
 }

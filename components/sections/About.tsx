@@ -16,11 +16,14 @@ import { OptimizedImage } from "../ui/OptimizedImage";
 import { Experience } from "@/types/experience";
 import { dateFormat } from "@/lib/utils/dateFormat";
 import { Summary } from "@/types/summary";
+import { About as AboutType } from "@/types/about";
 
 export const About = ({
+  about,
   experience,
   summary,
 }: {
+  about: AboutType | null;
   experience: Experience[];
   summary: Summary;
 }) => {
@@ -177,17 +180,29 @@ export const About = ({
             className="space-y-6"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {personalFacts.map((fact, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.1, duration: 0.5 }}
-                  className="flex items-center p-4 bg-white/60 rounded-xl border border-white/50 hover:bg-white/80 transition-all duration-300"
-                >
-                  <span className="text-lg leading-relaxed">{fact}</span>
-                </motion.div>
-              ))}
+              {about && about?.personal.length > 0
+                ? about.personal.map((item, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: index * 0.1, duration: 0.5 }}
+                      className="flex items-center p-4 bg-white/60 rounded-xl border border-white/50 hover:bg-white/80 transition-all duration-300"
+                    >
+                      <span className="text-lg leading-relaxed">{item}</span>
+                    </motion.div>
+                  ))
+                : personalFacts.map((fact, index) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: index * 0.1, duration: 0.5 }}
+                      className="flex items-center p-4 bg-white/60 rounded-xl border border-white/50 hover:bg-white/80 transition-all duration-300"
+                    >
+                      <span className="text-lg leading-relaxed">{fact}</span>
+                    </motion.div>
+                  ))}
             </div>
 
             <div className="mt-8 p-6 bg-gradient-to-br from-primary-50 to-accent-50 rounded-2xl border border-primary-100">

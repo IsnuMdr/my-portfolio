@@ -3,6 +3,33 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
+  // Seed about
+  await prisma.about.create({
+    data: {
+      name: "John Doe",
+      title: "Full Stack Developer",
+      headline: "Full Stack Developer",
+      tagline: "Passionate about building web applications",
+      summary:
+        "I'm a full stack developer with a focus on React, Next.js, and Node.js. I'm passionate about creating user-friendly interfaces and efficient server-side solutions.",
+      imageUrl: "/api/placeholder/1200/800",
+      personal: [
+        "Passionate about building web applications",
+        "Experience with React, Next.js, and Node.js",
+        "Strong problem-solving skills",
+        "Good communication skills",
+        "Team player with a can-do attitude",
+      ],
+      location: "Indonesia",
+      email: "4M6d5@example.com",
+      phone: "+1234567890",
+      linkedin: "https://www.linkedin.com/in/johndoe",
+      github: "https://github.com/johndoe",
+      resume: "https://example.com/resume.pdf",
+      status: "available",
+    },
+  });
+
   // Seed projects
   await prisma.project.createMany({
     data: [

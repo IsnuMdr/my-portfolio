@@ -9,24 +9,27 @@ import {
   Coffee,
 } from "lucide-react";
 import { TechIcons } from "../ui/TechIcons";
+import { About } from "@/types/about";
 
-export const Hero = () => {
+export const Hero = ({ about }: { about: About | null }) => {
   const socialLinks = [
     {
       icon: Github,
-      href: "https://github.com/IsnuMdr",
+      href: about?.github || "https://github.com/IsnuMdr",
       label: "GitHub",
       color: "hover:text-gray-900 hover:bg-gray-100",
     },
     {
       icon: Linkedin,
-      href: "https://www.linkedin.com/in/muhammad-isnu-munandar-b256961b3/",
+      href:
+        about?.linkedin ||
+        "https://www.linkedin.com/in/muhammad-isnu-munandar-b256961b3/",
       label: "LinkedIn",
       color: "hover:text-blue-600 hover:bg-blue-50",
     },
     {
       icon: Mail,
-      href: "mailto:isnu.mdr@gmail.com",
+      href: `mailto:${about?.email}` || "mailto:isnu.mdr@gmail.com",
       label: "Email",
       color: "hover:text-red-500 hover:bg-red-50",
     },
@@ -88,7 +91,9 @@ export const Hero = () => {
           >
             <span className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full border border-white/50 text-sm font-medium text-gray-600 shadow-soft">
               <Coffee size={16} className="text-accent-500" />
-              Available for new opportunities
+              {about?.status === "available"
+                ? "Available for new opportunities"
+                : "Open for opportunities"}
             </span>
           </motion.div>
 
@@ -102,7 +107,7 @@ export const Hero = () => {
             <h1 className="responsive-text-hero font-bold mb-6 text-shadow">
               Hi, I&apos;m{" "}
               <span className="text-gradient block sm:inline">
-                Isnu Munandar
+                {about?.name || "Muhammad Isnu Munandar"}
               </span>
             </h1>
 
@@ -114,12 +119,7 @@ export const Hero = () => {
             />
 
             <p className="responsive-text-body text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              A passionate{" "}
-              <span className="font-semibold text-primary-600">
-                Software Engineer
-              </span>{" "}
-              who crafts elegant digital experiences with modern technologies. I
-              love turning complex problems into simple, beautiful solutions.
+              {about?.headline || "I'm a passionate Software Engineer"}
             </p>
           </motion.div>
 
