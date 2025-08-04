@@ -54,7 +54,11 @@ export default async function Home() {
 
       <LazySection fallback={<SectionSkeleton />} rootMargin="200px">
         <Suspense fallback={<SectionSkeleton />}>
-          <Experiences experiences={experience} summary={summary} />
+          <Experiences
+            experiences={experience}
+            summary={summary}
+            resume={about?.resume}
+          />
         </Suspense>
       </LazySection>
 

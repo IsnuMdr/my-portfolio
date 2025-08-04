@@ -21,9 +21,11 @@ import { Summary } from "@/types/summary";
 export const Experiences = ({
   experiences,
   summary,
+  resume,
 }: {
   experiences: Experience[];
   summary: Summary;
+  resume?: string | null;
 }) => {
   const [hoveredExperience, setHoveredExperience] = useState<string | null>(
     null
@@ -362,7 +364,7 @@ export const Experiences = ({
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <motion.a
-                  href="/resume.pdf"
+                  href={resume || "#"}
                   download
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}

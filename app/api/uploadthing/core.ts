@@ -52,6 +52,27 @@ export const ourFileRouter = {
         size: file.size,
       };
     }),
+
+  pdfUploader: f({
+    "application/pdf": { maxFileSize: "4MB", maxFileCount: 1 },
+  })
+    .middleware(async ({ req }) => {
+      const user = auth(req);
+      if (!user) throw new UploadThingError("Unauthorized");
+      return { userId: user.id };
+    })
+    .onUploadComplete(async ({ metadata, file }) => {
+      console.log("PDF upload complete for userId:", metadata.userId);
+      console.log("file url", file.ufsUrl);
+
+      return {
+        uploadedBy: metadata.userId,
+        url: file.ufsUrl,
+        name: file.name,
+        size: file.size,
+        type: "pdf",
+      };
+    }),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;

@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { About } from "@prisma/client";
 import { ImageUpload } from "../ui/ImageUpload";
-import { CircleMinus, Plus } from "lucide-react";
+import { CircleMinus, Plus, Upload } from "lucide-react";
+import { UploadButton } from "@/lib/utils/uploadthing";
 
 interface AboutFormProps {
   about?: About | null;
@@ -308,7 +309,21 @@ export function AboutForm({ about, isEditing = false }: AboutFormProps) {
               />
             </div>
 
-            <div className="sm:col-span-3"></div>
+            <div className="sm:col-span-3">
+              <label
+                htmlFor="resume"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Resume
+              </label>
+              <UploadButton
+                className="input-elegant py-2 px-4 block w-full"
+                endpoint="pdfUploader"
+                onClientUploadComplete={(res) =>
+                  handleInputChange("resume", res[0].ufsUrl)
+                }
+              />
+            </div>
             <div className="sm:col-span-3">
               <label
                 htmlFor="imageUrl"

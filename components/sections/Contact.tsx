@@ -66,7 +66,7 @@ export const Contact = ({ about }: { about: About | null }) => {
       icon: Phone,
       label: "Phone",
       value: about?.phone || "+62 812-3456-7890",
-      href: `wa.me/${about?.phone}` || "wa.me/+6281234567890",
+      href: `https://wa.me/${about?.phone}` || "https://wa.me/+6281234567890",
       description: "Available Mon-Fri, 9AM-6PM",
       color: "text-green-600",
       bgColor: "bg-green-50",

@@ -17,6 +17,7 @@ import { Experience } from "@/types/experience";
 import { dateFormat } from "@/lib/utils/dateFormat";
 import { Summary } from "@/types/summary";
 import { About as AboutType } from "@/types/about";
+import { a } from "framer-motion/client";
 
 export const About = ({
   about,
@@ -82,30 +83,8 @@ export const About = ({
             className="space-y-6"
           >
             <p className="text-lg text-gray-600 leading-relaxed">
-              Hey there! I&apos;m a passionate{" "}
-              <span className="font-semibold text-primary-600">
-                Software Engineer
-              </span>{" "}
-              based in Indonesia with over 3 years of experience crafting
-              digital experiences that matter. My journey started with curiosity
-              about how websites work, and it evolved into a love affair with
-              code.
-            </p>
-            <p className="text-lg text-gray-600 leading-relaxed">
-              I specialize in{" "}
-              <span className="font-semibold text-accent-600">
-                full-stack development
-              </span>{" "}
-              with a focus on modern technologies like React, Next.js, and
-              Node.js. I believe in writing clean, maintainable code and
-              creating solutions that not only work beautifully but also scale
-              gracefully.
-            </p>
-            <p className="text-lg text-gray-600 leading-relaxed">
-              When I&apos;m not coding, you&apos;ll find me exploring new
-              technologies, contributing to open source projects, or sharing
-              knowledge through blog posts. I&apos;m always excited about the
-              next challenge and the opportunity to learn something new.
+              {about?.summary ||
+                "I am a passionate developer with a love for creating innovative solutions. My journey in tech started at a young age, and I have been dedicated to honing my skills ever since."}
             </p>
           </motion.div>
         );
@@ -354,7 +333,7 @@ export const About = ({
                 className="flex flex-col sm:flex-row gap-4"
               >
                 <motion.a
-                  href="/resume.pdf"
+                  href={about?.resume || "#"}
                   download
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
