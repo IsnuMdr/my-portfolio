@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import Image from "next/image";
 import { UploadDropzone } from "@/lib/utils/uploadthing";
 import { X, Upload } from "lucide-react";
+import { UploadedFileResponse } from "@/types/uploadthing";
 
 interface ImageUploadProps {
   value: string;
@@ -20,9 +21,9 @@ export function ImageUpload({
   const [uploadError, setUploadError] = useState<string | null>(null);
 
   const handleUploadComplete = useCallback(
-    (res: any[]) => {
+    (res: UploadedFileResponse[]) => {
       if (res && res.length > 0) {
-        onChange(res[0].url);
+        onChange(res[0].ufsUrl);
         setIsUploading(false);
         setUploadError(null);
       }
@@ -41,9 +42,22 @@ export function ImageUpload({
     setUploadError(null);
   }, []);
 
-  const removeImage = useCallback(() => {
-    onChange("");
-  }, [onChange]);
+  const removeImage = useCallback(
+    (value: string) => {
+      onChange("");
+      deleteImageOnServer(value).catch((error) => {
+        console.error("Failed to delete image from server:", error);
+      });
+    },
+    [onChange]
+  );
+
+  const deleteImageOnServer = async (value: string) => {
+    await fetch("/api/uploadthing", {
+      method: "DELETE",
+      body: JSON.stringify({ url: value }),
+    });
+  };
 
   if (value) {
     return (
@@ -60,7 +74,7 @@ export function ImageUpload({
             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center">
               <button
                 type="button"
-                onClick={removeImage}
+                onClick={() => removeImage(value)}
                 className="opacity-0 group-hover:opacity-100 bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition-all duration-200 transform scale-90 hover:scale-100"
                 title="Remove image"
               >
@@ -68,13 +82,6 @@ export function ImageUpload({
               </button>
             </div>
           </div>
-          {/* <button
-            type="button"
-            onClick={removeImage}
-            className="mt-2 text-sm text-red-600 hover:text-red-800"
-          >
-            Remove image
-          </button> */}
         </div>
       </div>
     );

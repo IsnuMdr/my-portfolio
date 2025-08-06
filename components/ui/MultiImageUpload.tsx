@@ -5,6 +5,7 @@ import { useState, useCallback } from "react";
 import Image from "next/image";
 import { UploadDropzone } from "@/lib/utils/uploadthing";
 import { X, Plus } from "lucide-react";
+import { UploadedFileResponse } from "@/types/uploadthing";
 
 interface MultiImageUploadProps {
   value: string[];
@@ -23,7 +24,7 @@ export function MultiImageUpload({
   const [uploadError, setUploadError] = useState<string | null>(null);
 
   const handleUploadComplete = useCallback(
-    (res: any[]) => {
+    (res: UploadedFileResponse[]) => {
       if (res && res.length > 0) {
         const newUrls = res.map((file) => file.url);
         const updatedUrls = [...value, ...newUrls].slice(0, maxFiles);
@@ -47,12 +48,22 @@ export function MultiImageUpload({
   }, []);
 
   const removeImage = useCallback(
-    (indexToRemove: number) => {
+    (indexToRemove: number, url: string) => {
       const updatedUrls = value.filter((_, index) => index !== indexToRemove);
+      deleteImageOnServer(url).catch((error) => {
+        console.error("Failed to delete image from server:", error);
+      });
       onChange(updatedUrls);
     },
     [value, onChange]
   );
+
+  const deleteImageOnServer = async (url: string) => {
+    await fetch("/api/uploadthing", {
+      method: "DELETE",
+      body: JSON.stringify({ url }),
+    });
+  };
 
   const canUploadMore = value.length < maxFiles;
 
@@ -74,7 +85,7 @@ export function MultiImageUpload({
                 <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center">
                   <button
                     type="button"
-                    onClick={() => removeImage(index)}
+                    onClick={() => removeImage(index, url)}
                     className="opacity-0 group-hover:opacity-100 bg-red-500 hover:bg-red-600 text-white p-2 rounded-full transition-all duration-200 transform scale-90 hover:scale-100"
                     title="Remove image"
                   >
