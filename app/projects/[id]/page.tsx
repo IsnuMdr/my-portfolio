@@ -5,6 +5,7 @@ import { getProjectById } from "@/lib/data/projects";
 import { Header } from "@/components/ui/Header";
 import { ProjectDetailContent } from "@/components/pages/ProjectDetailContent";
 import { dateFormat } from "@/lib/utils/dateFormat";
+import { getAbout } from "@/lib/data";
 
 export default async function ProjectDetailPage({
   params,
@@ -14,6 +15,7 @@ export default async function ProjectDetailPage({
   const id = (await params).id;
 
   const project = await getProjectById(id);
+  const about = await getAbout();
 
   if (!project) {
     notFound();
@@ -28,7 +30,7 @@ export default async function ProjectDetailPage({
         project={project}
         completedAtFormatted={completedAtFormatted}
       />
-      <Footer />
+      <Footer about={about} />
       <ScrollToTop />
     </main>
   );

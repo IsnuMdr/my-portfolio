@@ -18,7 +18,7 @@ import {
 import { redirect, usePathname } from "next/navigation";
 import { About } from "@/types/about";
 
-export const Header = ({ about }: { about: About | null }) => {
+export const Header = ({ about }: { about?: About | null }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
@@ -209,7 +209,7 @@ export const Header = ({ about }: { about: About | null }) => {
 
               <div className="hidden sm:block">
                 <div className="text-xl font-bold bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent">
-                  {about?.name || "Muhammad Isnu Munandar"}
+                  {about?.name || "Isnu Munandar"}
                 </div>
                 <div className="text-xs text-gray-500 font-medium group-hover:text-primary-600 transition-colors duration-300">
                   {about?.title || "Software Engineer"}
