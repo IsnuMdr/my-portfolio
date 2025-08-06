@@ -54,33 +54,8 @@ export async function PUT(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const { id } = await request.json();
-    // delete all images on server
-    const projectImages = await prisma.projectImage.findMany({
-      where: { projectId: id },
-    });
 
-    if (projectImages.length > 0) {
-      Promise.all([
-        ...projectImages.map(async (image) => {
-          await fetch("/api/uploadthing", {
-            method: "DELETE",
-            body: JSON.stringify({ url: image.imageUrl }),
-          });
-        }),
-        prisma.projectImage.deleteMany({
-          where: { projectId: id },
-        }),
-      ]);
-    }
-
-    Promise.all([
-      prisma.project.delete({
-        where: { id },
-      }),
-      prisma.projectTestimonial.deleteMany({
-        where: { projectId: id },
-      }),
-    ]);
+    await prisma.experience.delete({ where: { id } });
 
     return NextResponse.json({ status: 200 });
   } catch (error) {
