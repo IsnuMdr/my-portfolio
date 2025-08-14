@@ -104,11 +104,11 @@ model Experience {
 }
 
 model Skill {
-  id          String  @id @default(cuid())
+  id          String    @id @default(cuid())
   name        String
   category    String
-  level       Int     @default(1)
-  experience  String?
+  level       Int       @default(1)
+  experience  DateTime?
   description String?
 
   @@map("skills")

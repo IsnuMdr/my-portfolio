@@ -37,7 +37,8 @@ export function SkillForm({ skill, isEditing = false }: SkillFormProps) {
         category: skill.category,
         level: skill.level,
         description: skill.description,
-        experience: skill.experience,
+        experience:
+          skill.experience && skill.experience.toISOString().split("T")[0],
       });
     }
   }, [skill]);
@@ -50,12 +51,18 @@ export function SkillForm({ skill, isEditing = false }: SkillFormProps) {
       if (isEditing) {
         formData.id = skill?.id as string;
       }
+
+      const payload = {
+        ...formData,
+        experience: formData.experience ? new Date(formData.experience) : null,
+      };
+
       const method = isEditing ? "PUT" : "POST";
 
       const response = await fetch("/api/skills", {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -159,12 +166,12 @@ export function SkillForm({ skill, isEditing = false }: SkillFormProps) {
                 Experience
               </label>
               <input
-                type="text"
+                type="date"
                 id="experience"
                 required
                 value={formData.experience || ""}
                 onChange={(e) =>
-                  handleInputChange("experience", parseInt(e.target.value))
+                  handleInputChange("experience", e.target.value)
                 }
                 className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Years of experience with this skill..."

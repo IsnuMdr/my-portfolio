@@ -21,7 +21,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { name, category, level, description } = body;
+    const { name, category, level, description, experience } = body;
 
     const skill = await prisma.skill.create({
       data: {
@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
         category,
         level,
         description: description || null,
+        experience,
       },
     });
 
@@ -45,7 +46,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, name, category, level, description } = body;
+    const { id, name, category, level, description, experience } = body;
 
     const skill = await prisma.skill.update({
       where: { id },
@@ -54,6 +55,7 @@ export async function PUT(request: NextRequest) {
         category,
         level,
         description: description || null,
+        experience,
       },
     });
 

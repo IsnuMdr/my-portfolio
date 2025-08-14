@@ -1,8 +1,8 @@
-// app/admin/skills/page.tsx
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { DeleteSkillButton } from "@/components/admin/DeleteSkillsButton";
 import { Edit } from "lucide-react";
+import { calculateYearsFromDate } from "@/lib/utils/dateFormat";
 
 async function getSkills() {
   return await prisma.skill.findMany({
@@ -80,14 +80,20 @@ export default async function AdminSkills() {
                           </p>
                         )}
                       </div>
-                      <div className="ml-4 flex items-center space-x-2">
-                        <Link
-                          href={`/admin/skills/${skill.id}`}
-                          className="text-blue-600 hover:text-blue-900 text-sm"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Link>
-                        <DeleteSkillButton skillId={skill.id} />
+                      <div className="flex flex-col justify-between items-center space-y-1">
+                        <span className="text-xs text-gray-500">
+                          {skill.experience &&
+                            calculateYearsFromDate(skill.experience)}
+                        </span>
+                        <div className="flex items-center space-x-2">
+                          <Link
+                            href={`/admin/skills/${skill.id}`}
+                            className="text-blue-600 hover:text-blue-900 text-sm"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Link>
+                          <DeleteSkillButton skillId={skill.id} />
+                        </div>
                       </div>
                     </div>
                   </div>

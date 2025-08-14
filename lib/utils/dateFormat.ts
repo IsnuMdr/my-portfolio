@@ -40,3 +40,22 @@ export const calculateDuration = (
     }`;
   }
 };
+
+export function calculateYearsFromDate(date: Date | string): string {
+  const inputDate = new Date(date);
+  const now = new Date();
+
+  let years = now.getFullYear() - inputDate.getFullYear();
+
+  // Check if the full year has passed
+  const hasNotHadBirthdayThisYear =
+    now.getMonth() < inputDate.getMonth() ||
+    (now.getMonth() === inputDate.getMonth() &&
+      now.getDate() < inputDate.getDate());
+
+  if (hasNotHadBirthdayThisYear) {
+    years -= 1;
+  }
+
+  return years + " years";
+}

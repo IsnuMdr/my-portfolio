@@ -108,7 +108,7 @@ export async function DELETE(request: Request) {
     if (projectImages.length > 0) {
       Promise.all([
         ...projectImages.map(async (image) => {
-          await fetch("/api/uploadthing", {
+          await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/uploadthing`, {
             method: "DELETE",
             body: JSON.stringify({ url: image.imageUrl }),
           });

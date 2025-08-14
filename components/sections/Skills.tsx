@@ -13,6 +13,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { Skill } from "@/types/skills";
+import { calculateYearsFromDate } from "@/lib/utils/dateFormat";
 
 export const Skills = ({ skills }: { skills: Skill[] }) => {
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -185,7 +186,7 @@ export const Skills = ({ skills }: { skills: Skill[] }) => {
                         </h3>
                         {skill.experience && (
                           <p className="text-sm text-gray-500">
-                            {skill.experience}
+                            {calculateYearsFromDate(skill.experience)}
                           </p>
                         )}
                       </div>
