@@ -101,6 +101,7 @@ export function ProjectForm({ project, isEditing = false }: ProjectFormProps) {
 
       const payload = {
         ...formData,
+        teamSize: Number(formData.teamSize),
         completedAt: new Date(formData.completedAt),
         technologies: formData.technologies
           .split(",")
