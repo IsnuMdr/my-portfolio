@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Experience, ExperienceType } from "@prisma/client";
 import { ImageUpload } from "@/components/ui/ImageUpload";
+import { CircleMinus, Plus } from "lucide-react";
 
 interface ExperienceFormProps {
   experience?: Experience;
@@ -21,7 +22,8 @@ interface FormData {
   location?: string | null;
   companyLogo?: string | null;
   companyUrl?: string | null;
-  technologies: string[];
+  technologies: string;
+  achievements: string[];
   type: ExperienceType;
 }
 
@@ -41,7 +43,8 @@ export function ExperienceForm({
     location: null,
     companyLogo: null,
     companyUrl: null,
-    technologies: [],
+    technologies: "",
+    achievements: [""],
     type: "fullTime",
   });
 
@@ -58,7 +61,8 @@ export function ExperienceForm({
         location: experience?.location || null,
         companyLogo: experience?.companyLogo || null,
         companyUrl: experience?.companyUrl || null,
-        technologies: experience.technologies,
+        technologies: experience.technologies.join(", "),
+        achievements: experience.achievements || [""],
         type: experience.type,
       });
     }
@@ -77,6 +81,10 @@ export function ExperienceForm({
         ...formData,
         startDate: new Date(formData.startDate),
         endDate: formData.endDate ? new Date(formData.endDate) : null,
+        technologies: formData.technologies
+          .split(",")
+          .map((tech) => tech.trim())
+          .filter(Boolean),
       };
 
       const method = isEditing ? "PUT" : "POST";
@@ -106,6 +114,33 @@ export function ExperienceForm({
     value: string | boolean
   ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleArrayInputChange = (
+    field: keyof FormData,
+    index: number,
+    value: string
+  ) => {
+    setFormData((prev) => {
+      const arrayField = [...(prev[field] as string[])];
+      arrayField[index] = value;
+      return { ...prev, [field]: arrayField };
+    });
+  };
+
+  const addArrayItem = (field: keyof FormData) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: [...(prev[field] as string[]), ""],
+    }));
+  };
+
+  const removeArrayItem = (field: keyof FormData, index: number) => {
+    setFormData((prev) => {
+      const arrayField = [...(prev[field] as string[])];
+      arrayField.splice(index, 1);
+      return { ...prev, [field]: arrayField };
+    });
   };
 
   const experienceTypes = [
@@ -173,6 +208,49 @@ export function ExperienceForm({
                 className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="Describe your role, responsibilities, and achievements..."
               />
+            </div>
+
+            <div className="sm:col-span-6">
+              <label
+                htmlFor="achievements"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Achievements
+              </label>
+              {formData.achievements.map((achievement, index) => (
+                <div key={index} className="flex items-center mb-2">
+                  <input
+                    type="text"
+                    value={achievement}
+                    onChange={(e) =>
+                      handleArrayInputChange(
+                        "achievements",
+                        index,
+                        e.target.value
+                      )
+                    }
+                    className="mt-1 input-elegant py-2 px-4 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder={`Achievement ${index + 1}`}
+                  />
+                  {formData.achievements.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeArrayItem("achievements", index)}
+                      className="ml-2 text-red-500 hover:text-red-700"
+                    >
+                      <CircleMinus className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => addArrayItem("achievements")}
+                className="flex items-center mt-2 text-sm bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 "
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Add Feature
+              </button>
             </div>
 
             <div className="sm:col-span-3">
