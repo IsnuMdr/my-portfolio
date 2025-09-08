@@ -17,6 +17,9 @@ import { LazySection } from "@/components/ui/LazySection";
 import { Suspense } from "react";
 import { getSummary } from "@/lib/data/summary";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const SectionSkeleton = () => (
   <div className="py-20">
     <div className="container-elegant">
